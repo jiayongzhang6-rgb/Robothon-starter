@@ -1,0 +1,54 @@
+{
+  "participant_id": "d2f04863-5683-4e20-bd39-32f0cf339dc2",
+  "all_passed": false,
+  "summary": {
+    "avg_stability": 82.39,
+    "avg_efficiency": 77.2,
+    "avg_success_rate": 14.62,
+    "avg_overall": 60.5
+  },
+  "tasks": [
+    {
+      "name": "基础定位",
+      "target": [
+        0.1,
+        0.0,
+        0.8
+      ],
+      "stability": 82.77027027027027,
+      "efficiency": 99.97829024895219,
+      "success_rate": 13.599450553586564,
+      "overall": 67.18,
+      "passed": false,
+      "position_error": 0.364
+    },
+    {
+      "name": "横向移动",
+      "target": [
+        0.0,
+        0.15,
+        0.8
+      ],
+      "stability": 82.77027027027027,
+      "efficiency": 57.817265455477525,
+      "success_rate": 17.017886959890546,
+      "overall": 55.56,
+      "passed": false,
+      "position_error": 0.3298
+    },
+    {
+      "name": "对角移动",
+      "target": [
+        0.1,
+        0.1,
+        0.85
+      ],
+      "stability": 81.64414414414415,
+      "efficiency": 73.79746998107458,
+      "success_rate": 13.243750084250294,
+      "overall": 58.77,
+      "passed": false,
+      "position_error": 0.3676
+    }
+  ]
+}
