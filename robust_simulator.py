@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-FFAI Robothon 2026 - 容错仿真系统
-自动fallback + 错误日志
+FFAI Robothon 2026 - 3DOF容错仿真系统
+模型几何重构版本
 """
 
 import json
@@ -51,7 +51,7 @@ class BasicPhysicsEngine:
         self.reset()
     
     def reset(self):
-        self.pos = np.array([0.0, 0.0, 1.15])
+        self.pos = np.array([0.0, 0.0, 0.85])  # 调整初始位置
         return {"end_effector_pos": self.pos.tolist(), "engine": "basic"}
     
     def step(self, action: np.ndarray):
@@ -60,7 +60,7 @@ class BasicPhysicsEngine:
 
 
 class RobustController:
-    """容错控制器"""
+    """3DOF容错控制器"""
     
     def __init__(self):
         self.log = LogManager()
@@ -72,7 +72,7 @@ class RobustController:
         try:
             from robot_controller import RobotController
             self.engine = RobotController()
-            self.engine_type = "mujoco"
+            self.engine_type = "mujoco_3dof"
         except Exception as e:
             self.log.log_error(ErrorType.MUJOCO_FAILED, str(e))
             self.engine = BasicPhysicsEngine()
@@ -93,7 +93,7 @@ class RobustController:
     def pid_step(self, target_pos: np.ndarray, dt: float = 0.01):
         if hasattr(self.engine, 'pid_step'):
             return self.engine.pid_step(target_pos, dt)
-        return self.step(target_pos[:2] * 0.1)
+        return self.step(target_pos[:3] * 0.1)
     
     def get_status(self):
         return self.engine.get_status() if hasattr(self.engine, 'get_status') else {"engine": self.engine_type}
