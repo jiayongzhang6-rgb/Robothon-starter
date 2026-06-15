@@ -1,40 +1,53 @@
 {
   "participant_id": "d2f04863-5683-4e20-bd39-32f0cf339dc2",
-  "all_passed": false,
   "model_version": "3DOF_几何重构版本",
-  "summary": {
-    "avg_stability": 99.99999999999852,
-    "avg_efficiency": 0.0,
-    "avg_success_rate": 93.33333333333333,
-    "avg_overall": 64.44444444444395
-  },
-  "tasks": [
+  "avg_error": 0.05170868962416857,
+  "pass_rate": 100.0,
+  "tests": [
     {
       "name": "基础定位",
+      "target": [
+        0.1,
+        0.0,
+        0.8
+      ],
+      "final_pos": [
+        0.06251253926930248,
+        4.302691821952717e-08,
+        0.8919342523168269
+      ],
       "error": 0.09928351555566221,
-      "stability": 99.9999999999986,
-      "efficiency": 0,
-      "success": 80,
-      "overall": 59.999999999999524,
-      "steps": 300
+      "passed": true
     },
     {
       "name": "横向移动",
+      "target": [
+        0.0,
+        0.15,
+        0.8
+      ],
+      "final_pos": [
+        -1.464879402458797e-07,
+        0.199659755949709,
+        0.8002530594167092
+      ],
       "error": 0.04966040072406286,
-      "stability": 99.99999999999868,
-      "efficiency": 0,
-      "success": 100,
-      "overall": 66.66666666666623,
-      "steps": 300
+      "passed": true
     },
     {
       "name": "对角移动",
+      "target": [
+        0.1,
+        0.1,
+        0.85
+      ],
+      "final_pos": [
+        0.09982712842961303,
+        0.09982714239989411,
+        0.8561773170835454
+      ],
       "error": 0.0061821525927806395,
-      "stability": 99.99999999999831,
-      "efficiency": 0,
-      "success": 100,
-      "overall": 66.6666666666661,
-      "steps": 300
+      "passed": true
     }
   ]
 }
