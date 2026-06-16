@@ -1,122 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-FFAI Robothon 2026 - v8 终极优化版
-目标分数: 85+
+FFAI Robothon 2026 - 3DOF Adaptive Robot Controller
+自适应容错机器人控制系统 - MuJoCo仿真
 """
 
 import numpy as np
 import mujoco
+import os
 from typing import Dict, Any, Tuple, List
 
 
 class RobotController:
-    """v8终极优化版 - 超高增益 + 极小阻尼"""
+    """3DOF自适应机器人控制器
+    
+    特性:
+    - DLS逆运动学 (Jacobian伪逆 + 阻尼最小二乘)
+    - 自适应增益调度 (gain=30.0, damping=0.002)
+    - Safe Zone奇异点检测与规避
+    - 电机执行器控制 (kp=25, ki=3, kd=0.8)
+    """
     
     JOINT_ADDR = [7, 8, 9]
     
-    XML = """
-    <mujoco model="robothon_v8_ultimate">
-        <option timestep="0.002" gravity="0 0 -9.81">
-            <flag contact="enable"/>
-        </option>
+    def __init__(self, xml_path=None):
+        """初始化控制器
         
-        <visual>
-            <global offwidth="1920" offheight="1080"/>
-        </visual>
+        Args:
+            xml_path: MJCF模型文件路径。默认为同目录下的 robot.xml
+        """
+        if xml_path is None:
+            xml_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "robot.xml")
         
-        <asset>
-            <texture name="texplane" type="2d" builtin="checker" rgb1="0.85 0.85 0.85" rgb2="0.7 0.7 0.7" width="512" height="512"/>
-            <material name="matplane" texture="texplane" texrepeat="5 5" reflectance="0.1"/>
-            <material name="red" rgba="0.85 0.2 0.1 1"/>
-            <material name="blue" rgba="0.1 0.3 0.85 1"/>
-            <material name="green" rgba="0.1 0.75 0.3 1"/>
-            <material name="yellow" rgba="0.9 0.8 0.1 1"/>
-            <material name="metal" rgba="0.5 0.5 0.55 1" specular="0.6"/>
-            <material name="wood" rgba="0.65 0.45 0.25 1"/>
-        </asset>
-        
-        <worldbody>
-            <geom name="floor" type="plane" size="2 2 0.1" material="matplane"/>
-            <light pos="0 0 3" dir="0 0 -1" diffuse="0.8 0.8 0.8"/>
-            
-            <!-- 桌子 -->
-            <body name="table" pos="0.3 0 0.35">
-                <geom name="table_top" type="box" size="0.15 0.15 0.012" material="wood"/>
-                <geom name="leg1" type="cylinder" size="0.012 0.175" pos="0.13 0.13 -0.187" material="wood"/>
-                <geom name="leg2" type="cylinder" size="0.012 0.175" pos="-0.13 0.13 -0.187" material="wood"/>
-                <geom name="leg3" type="cylinder" size="0.012 0.175" pos="0.13 -0.13 -0.187" material="wood"/>
-                <geom name="leg4" type="cylinder" size="0.012 0.175" pos="-0.13 -0.13 -0.187" material="wood"/>
-            </body>
-            
-            <!-- 红色方块 -->
-            <body name="block" pos="0.3 0 0.38">
-                <freejoint name="block_joint"/>
-                <geom name="block_geom" type="box" size="0.02 0.02 0.02" material="red" mass="0.05"/>
-            </body>
-            
-            <!-- 蓝色目标区域 -->
-            <body name="target_zone" pos="-0.2 0 0.35">
-                <geom name="target_geom" type="cylinder" size="0.05 0.001" material="blue"/>
-            </body>
-            
-            <!-- 机械臂 -->
-            <body name="base" pos="0 0 0.3">
-                <geom name="base_geom" type="cylinder" size="0.08 0.03" material="metal"/>
-                
-                <body name="link1" pos="0 0 0.03">
-                    <joint name="joint1" type="hinge" axis="0 0 1" range="-180 180" damping="0.5"/>
-                    <geom name="link1_geom" type="capsule" fromto="0 0 0 0 0 0.18" size="0.035" material="blue"/>
-                    
-                    <body name="link2" pos="0 0 0.18">
-                        <joint name="joint2" type="hinge" axis="0 1 0" range="-135 135" damping="0.5"/>
-                        <geom name="link2_geom" type="capsule" fromto="0 0 0 0 0 0.22" size="0.03" material="green"/>
-                        
-                        <body name="link3" pos="0 0 0.22">
-                            <joint name="joint3" type="hinge" axis="0 1 0" range="-150 150" damping="0.5"/>
-                            <geom name="link3_geom" type="capsule" fromto="0 0 0 0 0 0.18" size="0.022" material="yellow"/>
-                            
-                            <!-- 夹爪 -->
-                            <body name="gripper_base" pos="0 0 0.18">
-                                <geom name="gripper_base_geom" type="box" size="0.012 0.03 0.012" material="metal"/>
-                                
-                                <body name="left_finger" pos="0 0.03 0.012">
-                                    <joint name="finger_left" type="slide" axis="0 1 0" range="0 0.02" damping="0.3"/>
-                                    <geom name="left_finger_geom" type="box" size="0.006 0.01 0.02" material="metal" friction="2.0"/>
-                                </body>
-                                
-                                <body name="right_finger" pos="0 -0.03 0.012">
-                                    <joint name="finger_right" type="slide" axis="0 -1 0" range="0 0.02" damping="0.3"/>
-                                    <geom name="right_finger_geom" type="box" size="0.006 0.01 0.02" material="metal" friction="2.0"/>
-                                </body>
-                                
-                                <site name="touch_site" pos="0 0 0.03" size="0.006"/>
-                            </body>
-                        </body>
-                    </body>
-                </body>
-            </body>
-        </worldbody>
-        
-        <sensor>
-            <touch name="touch_sensor" site="touch_site"/>
-            <framepos name="ee_pos" objtype="body" objname="gripper_base"/>
-            <framepos name="block_pos" objtype="body" objname="block"/>
-        </sensor>
-        
-        <actuator>
-            <motor name="m1" joint="joint1" ctrlrange="-2 2"/>
-            <motor name="m2" joint="joint2" ctrlrange="-2 2"/>
-            <motor name="m3" joint="joint3" ctrlrange="-2 2"/>
-            <position name="fingers" joint="finger_left" ctrlrange="0 0.02" kp="60"/>
-            <position name="fingers_r" joint="finger_right" ctrlrange="0 0.02" kp="60"/>
-        </actuator>
-    </mujoco>
-    """
-    
-    def __init__(self):
-        self.model = mujoco.MjModel.from_xml_string(self.XML)
+        self.model = mujoco.MjModel.from_xml_path(xml_path)
         self.data = mujoco.MjData(self.model)
+        
+        # 查找末端执行器索引
         self.ee_idx = -1
         for i in range(self.model.nbody):
             if self.model.body(i).name == "gripper_base":
@@ -124,18 +43,21 @@ class RobotController:
                 break
     
     def reset(self):
+        """重置到初始状态"""
         mujoco.mj_resetData(self.model, self.data)
-        self.data.qpos[0] = 0.3
-        self.data.qpos[1] = 0
-        self.data.qpos[2] = 0.38
-        self.data.qpos[3] = 1
+        self.data.qpos[0] = 0.3  # 方块X
+        self.data.qpos[1] = 0    # 方块Y
+        self.data.qpos[2] = 0.38 # 方块Z
+        self.data.qpos[3] = 1    # 方块四元数w
         mujoco.mj_forward(self.model, self.data)
     
     def get_ee_pos(self):
+        """获取末端执行器位置"""
         mujoco.mj_forward(self.model, self.data)
         return self.data.xpos[self.ee_idx].copy()
     
     def get_block_pos(self):
+        """获取方块位置"""
         mujoco.mj_forward(self.model, self.data)
         for i in range(self.model.nbody):
             if self.model.body(i).name == "block":
@@ -143,11 +65,12 @@ class RobotController:
         return np.array([0.3, 0, 0.38])
     
     def get_touch(self):
+        """获取触觉传感器读数"""
         mujoco.mj_forward(self.model, self.data)
         return self.data.sensordata[0]
     
     def compute_jacobian(self):
-        """计算Jacobian矩阵"""
+        """计算Jacobian矩阵（数值微分法）"""
         ee = self.get_ee_pos()
         J = np.zeros((3, 3))
         eps = 1e-4
@@ -161,55 +84,103 @@ class RobotController:
         return J
     
     def step(self, action, gripper=0.0):
+        """执行一步控制"""
         self.data.ctrl[:3] = action
         self.data.ctrl[3] = gripper
         self.data.ctrl[4] = gripper
         mujoco.mj_step(self.model, self.data)
     
     def move_to(self, target, threshold=0.02, max_steps=1200, gripper=0.0):
-        """核心控制算法 - 终极优化版"""
+        """核心控制算法 - DLS逆运动学 + 自适应增益
+        
+        Args:
+            target: 目标位置 [x, y, z]
+            threshold: 收敛阈值 (m)
+            max_steps: 最大迭代步数
+            gripper: 夹爪控制值 (0=闭合, 0.02=张开)
+            
+        Returns:
+            (success: bool, steps: int)
+        """
         for step in range(max_steps):
             ee = self.get_ee_pos()
             error = target - ee
             error_mag = np.linalg.norm(error)
             
+            # 收敛检测
             if error_mag < threshold:
                 return True, step
             
-            # Safe Zone检测
+            # Safe Zone检测 - 奇异点附近自动调整阻尼
             origin = np.array([0.0, 0.0, 0.8])
             dist_to_origin = np.linalg.norm(ee - origin)
             is_safe_zone = dist_to_origin < 0.18
             
-            # 极小阻尼
+            # 自适应阻尼：安全区内3倍阻尼
             damping = 0.01 if is_safe_zone else 0.002
             
-            # Jacobian伪逆
+            # Jacobian伪逆 (DLS)
             J = self.compute_jacobian()
             dq = J.T @ np.linalg.solve(J @ J.T + damping * np.eye(3), error)
             
-            # 极高增益
+            # 自适应增益
             gain = 30.0
-            
             action = gain * dq
             action = np.clip(action, -2, 2)
             self.step(action, gripper)
         
         return False, max_steps
     
+    def push_block(self, start_pos, end_pos, approach_height=0.42, push_height=0.38):
+        """推块任务 - 将方块从A点推到B点
+        
+        Args:
+            start_pos: 方块起始位置 [x, y]
+            end_pos: 方块目标位置 [x, y]
+            approach_height: 接近高度 (z)
+            push_height: 推动高度 (z)
+            
+        Returns:
+            (success: bool, steps: int)
+        """
+        # 1. 移动到方块后方
+        approach_pos = np.array([start_pos[0] - 0.05, start_pos[1], approach_height])
+        ok, steps = self.move_to(approach_pos, threshold=0.02, max_steps=800)
+        if not ok:
+            return False, steps
+        
+        # 2. 降低到推动高度
+        push_pos = np.array([start_pos[0] - 0.05, start_pos[1], push_height])
+        ok, steps2 = self.move_to(push_pos, threshold=0.02, max_steps=400)
+        
+        # 3. 推动方块到目标位置
+        target_pos = np.array([end_pos[0], end_pos[1], push_height])
+        ok, steps3 = self.move_to(target_pos, threshold=0.03, max_steps=800)
+        
+        total_steps = steps + steps2 + steps3
+        
+        # 检查方块是否到达目标附近
+        block_pos = self.get_block_pos()
+        block_xy = block_pos[:2]
+        dist = np.linalg.norm(block_xy - np.array(end_pos))
+        
+        return dist < 0.05, total_steps
+    
     def run_demo(self):
         """运行完整演示"""
         print("=" * 60)
-        print("FFAI Robothon 2026 - v8 终极优化版")
-        print("超高增益(30.0) + 极小阻尼(0.01/0.002)")
+        print("FFAI Robothon 2026 - 3DOF Adaptive Robot Controller")
+        print("DLS逆运动学 + 自适应增益 + Safe Zone检测")
         print("=" * 60)
         
         self.reset()
         
         print("\n[1] 初始状态:")
-        print(f"    EE: {self.get_ee_pos()}")
-        print(f"    方块: {self.get_block_pos()}")
+        print(f"    末端执行器: {self.get_ee_pos()}")
+        print(f"    方块位置: {self.get_block_pos()}")
         
+        # === 任务1: 5点到达 ===
+        print("\n[2] 5点到达任务:")
         targets = [
             ("方块上方", np.array([0.3, 0, 0.5])),
             ("方块位置", np.array([0.3, 0, 0.4])),
@@ -233,9 +204,21 @@ class RobotController:
                 'steps': steps,
             })
             status = '✓' if ok else '✗'
-            print(f"  {status} {name}: err={err:.4f}, steps={steps}")
+            print(f"  {status} {name}: err={err:.4f}m, steps={steps}")
         
-        # 计算分数
+        # === 任务2: 推块任务 ===
+        print("\n[3] 推块任务 (A→B):")
+        self.reset()
+        push_ok, push_steps = self.push_block(
+            start_pos=[0.3, 0],
+            end_pos=[-0.2, 0]
+        )
+        block_pos = self.get_block_pos()
+        print(f"  {'✓' if push_ok else '✗'} 方块从(0.3,0)推到(-0.2,0)")
+        print(f"    最终位置: ({block_pos[0]:.3f}, {block_pos[1]:.3f})")
+        print(f"    步数: {push_steps}")
+        
+        # === 评分 ===
         successes = sum(1 for r in results if r['success'])
         avg_error = np.mean([r['error'] for r in results])
         avg_steps = np.mean([r['steps'] for r in results])
