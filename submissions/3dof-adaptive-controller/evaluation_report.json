@@ -1,22 +1,22 @@
 {
   "participant_id": "d2f04863-5683-4e20-bd39-32f0cf339dc2",
-  "model_version": "3DOF_drawing_v9_97.5分",
+  "model_version": "3DOF_v13_8tasks_13.3mm",
   "tasks": {
     "reaching": {
       "name": "5-Point Reaching",
       "targets": 5,
       "reached": 5,
       "success_rate": 100.0,
-      "avg_error_mm": 18.8,
+      "avg_error_mm": 9.0,
       "score": 100.0
     },
     "square": {
       "name": "Draw Square (6cm)",
       "waypoints": 20,
-      "reached": 19,
-      "success_rate": 95.0,
-      "avg_error_mm": 17.2,
-      "score": 95.0
+      "reached": 20,
+      "success_rate": 100.0,
+      "avg_error_mm": 14.4,
+      "score": 100.0
     },
     "circle": {
       "name": "Draw Circle (r=4cm)",
@@ -29,22 +29,57 @@
     "figure8": {
       "name": "Draw Figure-8",
       "waypoints": 20,
-      "reached": 19,
-      "success_rate": 95.0,
-      "avg_error_mm": 16.6,
-      "score": 95.0
+      "reached": 20,
+      "success_rate": 100.0,
+      "avg_error_mm": 14.5,
+      "score": 100.0
+    },
+    "spiral": {
+      "name": "Draw Spiral (2 turns)",
+      "waypoints": 24,
+      "reached": 24,
+      "success_rate": 100.0,
+      "avg_error_mm": 14.0,
+      "score": 100.0
+    },
+    "star": {
+      "name": "Draw Star (5-point)",
+      "waypoints": 20,
+      "reached": 20,
+      "success_rate": 100.0,
+      "avg_error_mm": 14.1,
+      "score": 100.0
+    },
+    "heart": {
+      "name": "Draw Heart",
+      "waypoints": 30,
+      "reached": 30,
+      "success_rate": 100.0,
+      "avg_error_mm": 13.9,
+      "score": 100.0
+    },
+    "spiral_star": {
+      "name": "Draw Spiral Star (5-arm)",
+      "waypoints": 30,
+      "reached": 30,
+      "success_rate": 100.0,
+      "avg_error_mm": 12.0,
+      "score": 100.0
     }
   },
   "summary": {
-    "total_waypoints": 61,
-    "total_reached": 59,
-    "overall_success_rate": 96.7,
-    "overall_avg_error_mm": 16.6,
-    "total_score": 97.5
+    "total_waypoints": 165,
+    "total_reached": 165,
+    "overall_success_rate": 100.0,
+    "overall_avg_error_mm": 13.3,
+    "total_score": 100.0
   },
   "innovation": {
     "safe_zone_singularity_avoidance": true,
     "adaptive_damping": "0.002 <-> 0.01",
-    "3dof_path_following": true
+    "3dof_path_following": true,
+    "complex_tasks": ["spiral", "star", "heart", "spiral_star"],
+    "low_error_3dof": "<14mm average",
+    "confined_space_optimization": true
   }
 }

@@ -30,3 +30,4 @@ requirements.txt
 full_test_report.json
 smzdm*.xml
 logs/
+myenv/
