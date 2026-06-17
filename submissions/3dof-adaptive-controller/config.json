@@ -1,0 +1,11 @@
+{
+  "participant_id": "d2f04863-5683-4e20-bd39-32f0cf339dc2",
+  "team_name": "Hermes Robothon Team",
+  "competition": "FFAI Robothon 2026",
+  "category": "freestyle",
+  "created_at": "2026-06-14",
+  "submission_config": {
+    "auto_load_id": true,
+    "id_field": "participant_id"
+  }
+}

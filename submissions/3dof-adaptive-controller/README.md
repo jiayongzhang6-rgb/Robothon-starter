@@ -94,7 +94,7 @@ submissions/3dof-adaptive-controller/
 ├── robot.xml              # MuJoCo MJCF模型
 ├── robot_controller.py    # 核心控制器（IK + 画图）
 ├── teleop_keyboard.py     # 键盘遥操作
-├── demo.mp4               # Demo视频（60秒）
+├── demo.mp4               # Demo视频（28秒）
 ├── registration.json      # UUID注册
 ├── README.md              # 项目说明
 └── evaluation_report.json # 评估报告
