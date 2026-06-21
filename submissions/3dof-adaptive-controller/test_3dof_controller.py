@@ -311,29 +311,14 @@ class TestPathGenerators:
     
     def test_star_path(self):
         """测试星形路径"""
-        def generate_star(cx, cy, radius, z, num_points=25):
-            waypoints = []
-            outer_angle_offset = np.pi / 2
-            outer_points = []
-            for i in range(5):
-                angle = outer_angle_offset + 2 * np.pi * i / 5
-                x = cx + radius * np.cos(angle)
-                z_pt = z + radius * np.sin(angle)
-                outer_points.append([x, cy, z_pt])
-            inner_points = []
-            for i in range(5):
-                angle = outer_angle_offset + np.pi / 5 + 2 * np.pi * i / 5
-                r = radius * 0.4
-                x = cx + r * np.cos(angle)
-                z_pt = z + r * np.sin(angle)
-                inner_points.append([x, cy, z_pt])
-            for i in range(5):
-                waypoints.append(outer_points[i])
-                waypoints.append(inner_points[i])
-            return waypoints[:num_points]
-        
-        path = generate_star(0.3, 0, 0.04, 0.8)
-        assert len(path) == 25
+        from robot_controller import RobotController
+        c = RobotController()
+        path = c.generate_star(0.3, 0, 0.04, 0.8)
+        assert len(path) == 25, f"期望25个点，实际{len(path)}个点"
+        # 验证路径在合理范围内
+        for pt in path:
+            assert len(pt) == 3, f"每个点应有3个坐标"
+            assert pt[1] == 0, f"Y坐标应为0"
 
 
 class TestMuJoCoModel:
