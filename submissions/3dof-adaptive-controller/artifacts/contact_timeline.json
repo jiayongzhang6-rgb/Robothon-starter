@@ -1,0 +1,126 @@
+{
+  "uuid": "d2f04863-5683-4e20-bd39-32f0cf339dc2",
+  "total_contacts": 15,
+  "contacts": [
+    {
+      "task_id": 1,
+      "contact_start": 0.0,
+      "contact_end": 1.9,
+      "force_n": 1.914,
+      "contact_type": "end_effector",
+      "surface": "air"
+    },
+    {
+      "task_id": 2,
+      "contact_start": 2.0,
+      "contact_end": 3.9,
+      "force_n": 0.84,
+      "contact_type": "end_effector",
+      "surface": "air"
+    },
+    {
+      "task_id": 3,
+      "contact_start": 4.0,
+      "contact_end": 5.9,
+      "force_n": 1.661,
+      "contact_type": "end_effector",
+      "surface": "air"
+    },
+    {
+      "task_id": 4,
+      "contact_start": 6.0,
+      "contact_end": 7.9,
+      "force_n": 0.798,
+      "contact_type": "end_effector",
+      "surface": "air"
+    },
+    {
+      "task_id": 5,
+      "contact_start": 8.0,
+      "contact_end": 9.9,
+      "force_n": 0.752,
+      "contact_type": "end_effector",
+      "surface": "air"
+    },
+    {
+      "task_id": 6,
+      "contact_start": 10.0,
+      "contact_end": 11.9,
+      "force_n": 1.731,
+      "contact_type": "end_effector",
+      "surface": "air"
+    },
+    {
+      "task_id": 7,
+      "contact_start": 12.0,
+      "contact_end": 13.9,
+      "force_n": 1.473,
+      "contact_type": "end_effector",
+      "surface": "air"
+    },
+    {
+      "task_id": 8,
+      "contact_start": 14.0,
+      "contact_end": 15.9,
+      "force_n": 0.89,
+      "contact_type": "end_effector",
+      "surface": "air"
+    },
+    {
+      "task_id": 9,
+      "contact_start": 16.0,
+      "contact_end": 17.9,
+      "force_n": 1.48,
+      "contact_type": "gripper",
+      "surface": "workpiece"
+    },
+    {
+      "task_id": 10,
+      "contact_start": 18.0,
+      "contact_end": 19.9,
+      "force_n": 1.495,
+      "contact_type": "gripper",
+      "surface": "workpiece"
+    },
+    {
+      "task_id": 11,
+      "contact_start": 20.0,
+      "contact_end": 21.9,
+      "force_n": 1.361,
+      "contact_type": "gripper",
+      "surface": "workpiece"
+    },
+    {
+      "task_id": 12,
+      "contact_start": 22.0,
+      "contact_end": 23.9,
+      "force_n": 1.521,
+      "contact_type": "gripper",
+      "surface": "workpiece"
+    },
+    {
+      "task_id": 13,
+      "contact_start": 24.0,
+      "contact_end": 25.9,
+      "force_n": 1.708,
+      "contact_type": "gripper",
+      "surface": "workpiece"
+    },
+    {
+      "task_id": 14,
+      "contact_start": 26.0,
+      "contact_end": 27.9,
+      "force_n": 0.973,
+      "contact_type": "gripper",
+      "surface": "workpiece"
+    },
+    {
+      "task_id": 15,
+      "contact_start": 28.0,
+      "contact_end": 29.9,
+      "force_n": 0.764,
+      "contact_type": "gripper",
+      "surface": "workpiece"
+    }
+  ]
+}

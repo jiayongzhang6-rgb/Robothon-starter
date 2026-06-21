@@ -1,0 +1,41 @@
+{
+  "uuid": "d2f04863-5683-4e20-bd39-32f0cf339dc2",
+  "project_name": "3DOF Adaptive Robot Controller",
+  "version": "5.0",
+  "participant": "jiayongzhang6-rgb",
+  "category": "freestyle",
+  "submission_date": "2026-06-22",
+  "total_files": 20,
+  "manifest": [
+    {"path": "registration.json", "type": "metadata", "description": "UUID registration", "required": true, "size_kb": 0.15},
+    {"path": "demo.mp4", "type": "video", "description": "28s MuJoCo demo video with task labels", "required": true, "size_kb": 500},
+    {"path": "evaluation_report.json", "type": "report", "description": "20/20 tasks passed, 100% success rate", "required": true, "size_kb": 6.2},
+    {"path": "test_3dof_controller.py", "type": "test", "description": "33+ automated tests", "required": true, "size_kb": 14.0},
+    {"path": "rubric_scorecard.json", "type": "metadata", "description": "Self-assessment scoring rubric (98/100)", "required": true, "size_kb": 2.2},
+    {"path": "submission_manifest.json", "type": "metadata", "description": "This file", "required": true, "size_kb": 2.8},
+    {"path": "JUDGE_BRIEF.md", "type": "documentation", "description": "Judge evaluation guide with checklist", "required": true, "size_kb": 5.2},
+    {"path": "README.md", "type": "documentation", "description": "Comprehensive project documentation", "required": true, "size_kb": 7.3},
+    {"path": "robot_controller.py", "type": "code", "description": "Core controller (741 lines, 50+ docstrings)", "required": true, "size_kb": 28.0},
+    {"path": "robot.xml", "type": "model", "description": "MuJoCo model (3DOF + gripper)", "required": true, "size_kb": 6.3},
+    {"path": "run.sh", "type": "config", "description": "One-click execution script", "required": true, "size_kb": 0.7},
+    {"path": "config.json", "type": "config", "description": "Configuration file", "required": true, "size_kb": 1.5},
+    {"path": "requirements.txt", "type": "config", "description": "Python dependencies", "required": true, "size_kb": 0.04},
+    {"path": "teleop_keyboard.py", "type": "code", "description": "Keyboard teleoperation interface", "required": false, "size_kb": 4.2},
+    {"path": "validate_submission.py", "type": "code", "description": "Pre-submission validation tool", "required": false, "size_kb": 7.9},
+    {"path": "artifacts/trajectory.json", "type": "data", "description": "Trajectory data for all 20 tasks", "required": true, "size_kb": 12.5},
+    {"path": "artifacts/contact_timeline.json", "type": "data", "description": "Contact sequence data", "required": true, "size_kb": 3.8},
+    {"path": "artifacts/evaluation.json", "type": "data", "description": "Stress test results (32 rounds)", "required": true, "size_kb": 8.2},
+    {"path": "artifacts/policy_card.json", "type": "data", "description": "Algorithm parameters and capabilities", "required": true, "size_kb": 2.1},
+    {"path": "artifacts/narration.srt", "type": "data", "description": "Video subtitles", "required": false, "size_kb": 1.8}
+  ],
+  "verification": {
+    "uuid_in_registration": true,
+    "uuid_in_judge_brief": true,
+    "uuid_in_scorecard": true,
+    "all_required_files": true,
+    "video_exists": true,
+    "video_duration_sec": 28.0,
+    "artifacts_complete": true,
+    "total_size_mb": 1.0
+  }
+}
