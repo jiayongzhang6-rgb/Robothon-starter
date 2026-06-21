@@ -1,0 +1,38 @@
+{
+  "uuid": "d2f04863-5683-4e20-bd39-32f0cf339dc2",
+  "project_name": "3DOF Adaptive Robot Controller",
+  "participant": "jiayongzhang6-rgb",
+  "category": "freestyle",
+  "submission_date": "2026-06-22",
+  "total_files": 25,
+  "manifest": [
+    {"path": "registration.json", "type": "metadata", "description": "UUID registration", "required": true},
+    {"path": "demo.mp4", "type": "video", "description": "26s 1080p demo video", "size_mb": 0.73, "required": true},
+    {"path": "evaluation_report.json", "type": "report", "description": "20/20 tasks passed, 100% success", "required": true},
+    {"path": "test_3dof_controller.py", "type": "test", "description": "33+ automated tests", "required": true},
+    {"path": "rubric_scorecard.json", "type": "metadata", "description": "Self-assessment scoring rubric", "required": true},
+    {"path": "submission_manifest.json", "type": "metadata", "description": "This file", "required": true},
+    {"path": "JUDGE_BRIEF.md", "type": "documentation", "description": "Judge evaluation guide", "required": true},
+    {"path": "README.md", "type": "documentation", "description": "Project documentation", "required": true},
+    {"path": "robot_controller.py", "type": "code", "description": "Core controller (741 lines, 50+ docstrings)", "required": true},
+    {"path": "robot.xml", "type": "model", "description": "MuJoCo model (3DOF + gripper)", "required": true},
+    {"path": "run.sh", "type": "config", "description": "One-click execution", "required": true},
+    {"path": "config.json", "type": "config", "description": "Configuration file", "required": true},
+    {"path": "requirements.txt", "type": "config", "description": "Python dependencies", "required": true},
+    {"path": "teleop_keyboard.py", "type": "code", "description": "Keyboard teleoperation", "required": false},
+    {"path": "validate_submission.py", "type": "code", "description": "Submission validation", "required": false},
+    {"path": "artifacts/trajectory.json", "type": "data", "description": "Trajectory data for all 20 tasks", "required": true},
+    {"path": "artifacts/contact_timeline.json", "type": "data", "description": "Contact sequence", "required": true},
+    {"path": "artifacts/evaluation.json", "type": "data", "description": "Stress test results", "required": true},
+    {"path": "artifacts/policy_card.json", "type": "data", "description": "Algorithm parameters", "required": true},
+    {"path": "artifacts/narration.srt", "type": "data", "description": "Video subtitles", "required": false}
+  ],
+  "verification": {
+    "uuid_in_registration": true,
+    "uuid_in_judge_brief": true,
+    "uuid_in_scorecard": true,
+    "all_required_files": true,
+    "video_exists": true,
+    "artifacts_complete": true
+  }
+}
