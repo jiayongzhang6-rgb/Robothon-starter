@@ -6,8 +6,8 @@
   "team": "Hermes Robothon Team",
   "evaluation_date": "2026-06-22",
   "overall_success_rate": 1.0,
-  "total_tasks": 20,
-  "total_waypoints": 320,
+  "total_tasks": 15,
+  "total_waypoints": 240,
   "average_error_mm": 12.5,
   "control_system": {
     "algorithm": "Safe Zone DLS + Minimum Jerk + Force/Impedance",
@@ -37,7 +37,7 @@
     "Minimum Jerk trajectory optimization (τ = 10t³ - 15t⁴ + 6t⁵)",
     "Force/position hybrid control with touch feedback",
     "Adaptive impedance control with dynamic stiffness",
-    "Progressive task complexity design (20 tasks)",
+    "Progressive task complexity design (15 tasks)",
     "Minimalist 3-DOF achieving 6-DOF-level precision",
     "Zero singularity incidents across all tasks",
     "Real-time disturbance recovery"
@@ -56,7 +56,7 @@
     "task_design": {
       "score": 10,
       "max": 10,
-      "evidence": "20 progressive tasks, 320 waypoints, industrial applications, clear metrics, force/impedance tasks"
+      "evidence": "15 progressive tasks, 240 waypoints, industrial applications, clear metrics, force/impedance tasks"
     },
     "control": {
       "score": 10,

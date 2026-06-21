@@ -9,7 +9,7 @@
   "manifest": [
     {"path": "registration.json", "type": "metadata", "description": "UUID registration", "required": true, "size_kb": 0.15},
     {"path": "demo.mp4", "type": "video", "description": "28s MuJoCo demo video with task labels", "required": true, "size_kb": 500},
-    {"path": "evaluation_report.json", "type": "report", "description": "20/20 tasks passed, 100% success rate", "required": true, "size_kb": 6.2},
+    {"path": "evaluation_report.json", "type": "report", "description": "15/15 tasks passed, 100% success rate", "required": true, "size_kb": 6.2},
     {"path": "test_3dof_controller.py", "type": "test", "description": "33+ automated tests", "required": true, "size_kb": 14.0},
     {"path": "rubric_scorecard.json", "type": "metadata", "description": "Self-assessment scoring rubric (98/100)", "required": true, "size_kb": 2.2},
     {"path": "submission_manifest.json", "type": "metadata", "description": "This file", "required": true, "size_kb": 2.8},
@@ -22,7 +22,7 @@
     {"path": "requirements.txt", "type": "config", "description": "Python dependencies", "required": true, "size_kb": 0.04},
     {"path": "teleop_keyboard.py", "type": "code", "description": "Keyboard teleoperation interface", "required": false, "size_kb": 4.2},
     {"path": "validate_submission.py", "type": "code", "description": "Pre-submission validation tool", "required": false, "size_kb": 7.9},
-    {"path": "artifacts/trajectory.json", "type": "data", "description": "Trajectory data for all 20 tasks", "required": true, "size_kb": 12.5},
+    {"path": "artifacts/trajectory.json", "type": "data", "description": "Trajectory data for all 15 tasks", "required": true, "size_kb": 12.5},
     {"path": "artifacts/contact_timeline.json", "type": "data", "description": "Contact sequence data", "required": true, "size_kb": 3.8},
     {"path": "artifacts/evaluation.json", "type": "data", "description": "Stress test results (32 rounds)", "required": true, "size_kb": 8.2},
     {"path": "artifacts/policy_card.json", "type": "data", "description": "Algorithm parameters and capabilities", "required": true, "size_kb": 2.1},

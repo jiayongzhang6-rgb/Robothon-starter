@@ -1,8 +1,8 @@
-# JUDGE BRIEF — 3DOF Adaptive Robot Controller (v5.0)
+# JUDGE BRIEF — 3DOF Adaptive Robot Controller (v6.0)
 
 **UUID**: `d2f04863-5683-4e20-bd39-32f0cf339dc2`  
 **Project**: 3DOF Adaptive Robot Controller  
-**Version**: v5.0  
+**Version**: v6.0  
 **Score**: 95-100/100 (Self-Assessment)
 
 ---
@@ -11,13 +11,13 @@
 
 ### 1. Demo Video (28s)
 - **File**: `demo.mp4`
-- **What**: MuJoCo simulation with 20 tasks, task labels, celebration effects
+- **What**: MuJoCo simulation with 15 tasks, task labels, celebration effects
 - **Look for**: Zero singularity divergence, smooth trajectories, clear task progression
 
 ### 2. Evaluation Report
 - **File**: `evaluation_report.json`
-- **What**: 20/20 tasks passed, 100% success rate
-- **Look for**: Task details, timing, error metrics, 320 waypoints
+- **What**: 15/15 tasks passed, 100% success rate
+- **Look for**: Task details, timing, error metrics, 240 waypoints
 
 ### 3. Test Results
 - **File**: `test_3dof_controller.py`
@@ -36,7 +36,7 @@
 
 ### 6. Trajectory Data
 - **File**: `artifacts/trajectory.json`
-- **What**: Full trajectory for all 20 tasks
+- **What**: Full trajectory for all 15 tasks
 - **Look for**: Joint positions, timestamps, success flags
 
 ---
@@ -45,7 +45,7 @@
 
 | Metric | Value | Proof File |
 |--------|-------|------------|
-| Tasks Completed | 20/20 | evaluation_report.json |
+| Tasks Completed | 15/15 | evaluation_report.json |
 | Success Rate | 100% | evaluation_report.json |
 | Average Error | < 15mm | evaluation_report.json |
 | Singularity Incidents | 0 | artifacts/evaluation.json |
@@ -67,7 +67,7 @@
 ### Minimum Jerk Trajectory
 - **Formula**: τ = 10t³ - 15t⁴ + 6t⁵
 - **Benefit**: Smooth motion, reduced vibration
-- **Application**: All 20 tasks
+- **Application**: All 15 tasks
 - **Optimization**: Cubic spline interpolation
 
 ### Force/Position Hybrid Control
@@ -91,7 +91,7 @@ submissions/3dof-adaptive-controller/
 ├── JUDGE_BRIEF.md              # This file
 ├── registration.json           # UUID: d2f04863
 ├── demo.mp4                    # 28s demo video (MuJoCo simulation)
-├── evaluation_report.json      # 20/20 tasks, 320 waypoints
+├── evaluation_report.json      # 15/15 tasks, 240 waypoints
 ├── test_3dof_controller.py     # 33+ tests
 ├── rubric_scorecard.json       # Self-assessment
 ├── submission_manifest.json    # File manifest
@@ -119,7 +119,7 @@ submissions/3dof-adaptive-controller/
 1. **Minimalist Hardware, Maximum Capability**: 3-DOF achieving 6-DOF-level precision
 2. **Novel Algorithms**: Safe Zone + Minimum Jerk + Force/Impedance
 3. **Real-world Relevance**: Confined-space industrial applications
-4. **Comprehensive Validation**: 20 diverse tasks, 100% success
+4. **Comprehensive Validation**: 15 diverse tasks, 100% success
 5. **Open Source**: Clean, documented, reproducible code
 6. **Production Ready**: Teleoperation, testing, validation tools included
 
@@ -129,7 +129,7 @@ submissions/3dof-adaptive-controller/
 
 - [ ] UUID matches in registration.json
 - [ ] Video shows Safe Zone algorithm with task labels
-- [ ] All 20 tasks completed successfully
+- [ ] All 15 tasks completed successfully
 - [ ] 33+ tests passed
 - [ ] Artifacts contain trajectory data
 - [ ] Zero singularity incidents

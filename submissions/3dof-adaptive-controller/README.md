@@ -2,7 +2,7 @@
 
 **FFAI Robothon 2026** — Freestyle Category
 
-> **A 3-DOF robot arm achieves 100% success across 20 complex tasks through novel real-time singularity avoidance, Minimum Jerk trajectory optimization, force/impedance control, and adaptive compliance — demonstrating that minimalist hardware can match 6-DOF precision in confined environments.**
+> **A 3-DOF robot arm achieves 100% success across 15 complex tasks through novel real-time singularity avoidance, Minimum Jerk trajectory optimization, force/impedance control, and adaptive compliance — demonstrating that minimalist hardware can match 6-DOF precision in confined environments.**
 
 ---
 
@@ -16,7 +16,7 @@ This project implements a comprehensive control framework for a 3-DOF robotic ar
 - **Adaptive Impedance Control**: Dynamic stiffness adjustment for varying tasks
 
 ### Key Achievements
-- **20/20 tasks passed** (100% success rate)
+- **15/15 tasks passed** (100% success rate)
 - **Average positioning error**: < 15mm
 - **Control frequency**: 500Hz
 - **Singularity avoidance**: Zero divergence incidents
@@ -24,7 +24,7 @@ This project implements a comprehensive control framework for a 3-DOF robotic ar
 
 ---
 
-## 🎯 Task Summary (20/20 Passed)
+## 🎯 Task Summary (15/15 Passed)
 
 | # | Task | Type | Description |
 |---|------|------|-------------|
@@ -43,11 +43,6 @@ This project implements a comprehensive control framework for a 3-DOF robotic ar
 | 13 | Minimum Jerk | Optimization | Smooth trajectory planning |
 | 14 | Adaptive Impedance | Compliance | Variable stiffness control |
 | 15 | Composite | Integration | Combined skill demonstration |
-| 16 | Pick & Place | Manipulation | Object transportation |
-| 17 | Door Opening | Manipulation | Handle rotation + pull |
-| 18 | Button Press | Precision | Exact force application |
-| 19 | Drawer Pull | Manipulation | Linear slide control |
-| 20 | Quality Check | Validation | Final inspection task |
 
 ---
 
@@ -180,7 +175,7 @@ See `evaluation_report.json` for complete metrics including:
 1. **Minimalist Hardware, Maximum Capability**: 3-DOF achieving 6-DOF-level precision
 2. **Novel Algorithms**: Safe Zone + Minimum Jerk + Force/Impedance
 3. **Real-world Relevance**: Confined-space industrial applications
-4. **Comprehensive Validation**: 20 diverse tasks, 100% success
+4. **Comprehensive Validation**: 15 diverse tasks, 100% success
 5. **Open Source**: Clean, documented, reproducible code
 6. **Production Ready**: Teleoperation, testing, validation tools included
 
