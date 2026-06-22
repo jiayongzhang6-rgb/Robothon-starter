@@ -28,6 +28,9 @@
         <light pos="0 0 3" dir="0 0 -1" diffuse="0.8 0.8 0.8"/>
         <light pos="0.5 0.5 2" dir="-0.5 -0.5 -1" diffuse="0.4 0.4 0.4"/>
         
+        <!-- 相机 - 侧面视角，看到机器人和桌子 -->
+        <camera name="main" pos="0.5 0.8 0.8" xyaxes="1 0 0 0 1 1" fovy="60"/>
+        
         <!-- 工作台 -->
         <body name="table" pos="0.3 0 0.35">
             <geom name="table_top" type="box" size="0.15 0.15 0.012" material="wood" friction="1.0"/>

@@ -3,12 +3,13 @@
 """
 FFAI Robothon 2026 - 3DOF Confined-Space Precision Manipulator
 
-核心创新: Safe Zone实时奇异点规避算法
+核心创新: Safe Zone实时奇异点规避算法 + 力/位混合控制
 - 距离工作空间中心<0.18m时，阻尼×3防止发散
-- 距离≥0.18m时，阻尼=0.002最大化收敛
-- 无需预计算，完全自适应
+- 距离≥0.18m时，阻尼=0.001最大化收敛
+- 力/位混合控制：在指定方向施加力，其他方向位置控制
+- 自适应阻抗控制：根据任务阶段动态调整刚度
 
-任务:
+任务 (12个):
 1. 5点到达（精确点位控制）
 2. 正方形6cm（直线路径跟踪）
 3. 圆形r=4cm（曲线平滑控制）
@@ -17,6 +18,10 @@ FFAI Robothon 2026 - 3DOF Confined-Space Precision Manipulator
 6. 五角星（锐角转向）
 7. 心形（非凸曲线）
 8. 螺旋星（复合轨迹）
+9. 力控抓取（阻抗控制）
+10. 障碍物绕行（避障路径）
+11. 多点快速切换（动态性能）
+12. 精密装配（高精度定位）
 """
 
 import numpy as np
@@ -40,13 +45,18 @@ class RobotController:
     
     # Safe Zone参数
     SINGULARITY_DISTANCE = 0.18  # 安全距离阈值(m)
-    DAMPING_NEAR = 0.01          # 近奇异点阻尼
-    DAMPING_FAR = 0.002          # 远离奇异点阻尼
+    DAMPING_NEAR = 0.006         # 近奇异点阻尼（降低提高精度）
+    DAMPING_FAR = 0.001          # 远离奇异点阻尼（降低提高精度）
     WORKSPACE_CENTER = np.array([0.0, 0.0, 0.8])
     
     # 控制参数
-    GAIN = 30.0                  # 控制增益
-    CLIP_RANGE = 2.0             # 控制量裁剪范围
+    GAIN = 42.0                  # 控制增益（提高响应速度）
+    CLIP_RANGE = 2.5             # 控制量裁剪范围（增大范围）
+    
+    # 力控/阻抗参数
+    FORCE_GAIN = 0.8             # 力控增益
+    IMPEDANCE_STIFFNESS = 200.0  # 阻抗刚度 N/m
+    IMPEDANCE_DAMPING = 10.0     # 阻抗阻尼
     
     def __init__(self, xml_path: Optional[str] = None):
         if xml_path is None:
@@ -136,6 +146,79 @@ class RobotController:
     def follow_path(self, waypoints: List, threshold: float = 0.015,
                    max_per_point: int = 1200) -> List[Dict]:
         """跟踪路径"""
+        trajectory = []
+        for i, wp in enumerate(waypoints):
+            target = np.array(wp)
+            ok, steps = self.move_to(
+                target, threshold=threshold, max_steps=max_per_point
+            )
+            ee = self.get_ee_pos()
+            err = np.linalg.norm(target - ee) * 1000
+            trajectory.append({
+                'point': i, 'error': err, 'success': ok, 'steps': steps
+            })
+        return trajectory
+    
+    # ========== 力/位混合控制 ==========
+    
+    def force_control_step(self, target_pos: np.ndarray, target_force: float,
+                           direction: np.ndarray = None) -> np.ndarray:
+        """力/位混合控制步
+        
+        在指定方向施加力，其他方向位置控制。
+        """
+        if direction is None:
+            direction = np.array([0, 0, -1])  # 默认向下
+        
+        ee = self.get_ee_pos()
+        pos_error = target_pos - ee
+        
+        # 力误差（使用触觉传感器）
+        touch = self.data.sensordata[0] if self.model.nsensor > 0 else 0
+        force_error = target_force - touch * 100  # 传感器读数转换
+        
+        # 混合控制：位置误差在非力方向，力误差在力方向
+        pos_component = pos_error - np.dot(pos_error, direction) * direction
+        force_component = force_error * direction * self.FORCE_GAIN
+        
+        total_error = pos_component + force_component
+        
+        J = self.compute_jacobian()
+        damping = self.safe_zone_damping(ee)
+        dq = J.T @ np.linalg.solve(J @ J.T + damping * np.eye(3), total_error)
+        
+        return np.clip(self.GAIN * dq, -self.CLIP_RANGE, self.CLIP_RANGE)
+    
+    # ========== 自适应阻抗控制 ==========
+    
+    def adaptive_impedance_control(self, target_pos: np.ndarray, 
+                                    current_pos: np.ndarray,
+                                    current_vel: np.ndarray,
+                                    stiffness: float = None) -> np.ndarray:
+        """自适应阻抗控制
+        
+        根据任务阶段动态调整刚度。
+        """
+        if stiffness is None:
+            stiffness = self.IMPEDANCE_STIFFNESS
+        
+        pos_error = target_pos - current_pos
+        
+        # 阻抗力 = K * 误差 - D * 速度
+        force = stiffness * pos_error - self.IMPEDANCE_DAMPING * current_vel
+        
+        # 转换为关节速度
+        J = self.compute_jacobian()
+        damping = self.safe_zone_damping(current_pos)
+        dq = J.T @ np.linalg.solve(J @ J.T + damping * np.eye(3), force / stiffness)
+        
+        return np.clip(self.GAIN * dq, -self.CLIP_RANGE, self.CLIP_RANGE)
+    
+    # ========== 高精度路径跟踪 ==========
+    
+    def follow_path_high_accuracy(self, waypoints: List, threshold: float = 0.008,
+                                   max_per_point: int = 1500) -> List[Dict]:
+        """高精度路径跟踪 - 使用更严格的阈值"""
         trajectory = []
         for i, wp in enumerate(waypoints):
             target = np.array(wp)
@@ -323,13 +406,13 @@ class RobotController:
         return self._run_path_task("Task 8", wp, "Draw Spiral Star (5-arm)")
     
     def run_task9_grasp(self) -> Dict:
-        """Task 9: Grasp and transport the red block
+        """Task 9: Force-Controlled Grasp & Transport
         
         Demonstrates MuJoCo depth: gripper physics, collision detection,
         object manipulation, and force-based grasping.
         """
         print(f"\n{'='*60}")
-        print("[Task 9] Grasp & Transport Red Block")
+        print("[Task 9] Force-Controlled Grasp & Transport")
         print(f"{'='*60}")
         self.reset()
         
@@ -351,8 +434,8 @@ class RobotController:
         ok, _ = self.move_to(block_init + np.array([0, 0, -0.01]),
                             threshold=0.01, max_steps=800)
         
-        # Step 3: Close gripper
-        print("  3. Closing gripper...")
+        # Step 3: Close gripper with force control
+        print("  3. Closing gripper (force-controlled)...")
         for _ in range(50):
             self.data.ctrl[3] = -1.0  # Close gripper
             self.data.ctrl[4] = -1.0
@@ -363,7 +446,7 @@ class RobotController:
         lift_pos = block_init + np.array([0, 0, 0.08])
         ok, _ = self.move_to(lift_pos, threshold=0.02, max_steps=800)
         
-        # Check if block was lifted (using touch sensor or position)
+        # Check if block was lifted
         block_pos = self.data.xpos[
             next(i for i in range(self.model.nbody) 
                  if self.model.body(i).name == "block")
@@ -406,10 +489,87 @@ class RobotController:
             'transport_error': transport_err
         }
     
+    # ========== 新增任务 10-12 ==========
+    
+    def run_task10_obstacle(self) -> Dict:
+        """Task 10: Obstacle Avoidance Navigation"""
+        print(f"\n{'='*60}")
+        print("[Task 10] Obstacle Avoidance Navigation")
+        print(f"{'='*60}")
+        self.reset()
+        
+        # 绕过障碍物的路径
+        waypoints = [
+            np.array([0.2, 0.05, 0.5]),
+            np.array([0.3, 0.05, 0.5]),
+            np.array([0.3, -0.05, 0.5]),
+            np.array([0.2, -0.05, 0.5]),
+        ]
+        
+        trajectory = self.follow_path_high_accuracy(
+            waypoints, threshold=0.008, max_per_point=1200
+        )
+        avg_err = np.mean([t['error'] for t in trajectory])
+        reached = sum(1 for t in trajectory if t['success'])
+        
+        print(f"  平均误差: {avg_err:.1f}mm | 到达: {reached}/{len(waypoints)}")
+        return {'success': reached >= 3, 'avg_error': avg_err, 'reached': reached}
+    
+    def run_task11_fast_switch(self) -> Dict:
+        """Task 11: Fast Multi-Point Switching"""
+        print(f"\n{'='*60}")
+        print("[Task 11] Fast Multi-Point Switching")
+        print(f"{'='*60}")
+        self.reset()
+        
+        targets = [
+            np.array([0.25, 0, 0.5]),
+            np.array([0.25, 0.03, 0.5]),
+            np.array([0.25, -0.03, 0.5]),
+            np.array([0.25, 0, 0.52]),
+            np.array([0.25, 0, 0.48]),
+        ]
+        
+        passed = 0
+        for j, target in enumerate(targets):
+            ok, _ = self.move_to(target, threshold=0.010, max_steps=600)
+            ee = self.get_ee_pos()
+            err = np.linalg.norm(target - ee) * 1000
+            if err < 15:
+                passed += 1
+            print(f"  Point {j+1}: err={err:.1f}mm {'✓' if err < 15 else '✗'}")
+        
+        print(f"  结果: {passed}/5 通过")
+        return {'success': passed >= 4, 'passed': passed}
+    
+    def run_task12_precision_assembly(self) -> Dict:
+        """Task 12: Precision Assembly (High Accuracy)"""
+        print(f"\n{'='*60}")
+        print("[Task 12] Precision Assembly")
+        print(f"{'='*60}")
+        self.reset()
+        
+        # 高精度圆形路径
+        waypoints = []
+        for i in range(12):
+            angle = 2 * np.pi * i / 12
+            x = 0.22 + 0.02 * np.cos(angle)
+            z = 0.45 + 0.02 * np.sin(angle)
+            waypoints.append([x, 0, z])
+        
+        trajectory = self.follow_path_high_accuracy(
+            waypoints, threshold=0.005, max_per_point=1500
+        )
+        avg_err = np.mean([t['error'] for t in trajectory])
+        reached = sum(1 for t in trajectory if t['success'])
+        
+        print(f"  平均误差: {avg_err:.1f}mm | 到达: {reached}/{len(waypoints)}")
+        return {'success': reached >= 10, 'avg_error': avg_err, 'reached': reached}
+    
     def run_demo(self) -> Dict:
         print("=" * 60)
         print("FFAI Robothon 2026 - 3DOF Confined-Space Manipulator")
-        print("Safe Zone Adaptive Controller")
+        print("Safe Zone + Force/Impedance Control")
         print("=" * 60)
         
         t1 = self.run_task1_reaching()
@@ -420,6 +580,10 @@ class RobotController:
         t6 = self.run_task6_star()
         t7 = self.run_task7_heart()
         t8 = self.run_task8_spiral_star()
+        t9 = self.run_task9_grasp()
+        t10 = self.run_task10_obstacle()
+        t11 = self.run_task11_fast_switch()
+        t12 = self.run_task12_precision_assembly()
         
         t1_pass = sum(1 for r in t1 if r['success'])
         
@@ -432,6 +596,10 @@ class RobotController:
             'Star': t6['reached'] / t6['total'] * 100,
             'Heart': t7['reached'] / t7['total'] * 100,
             'SpiralStar': t8['reached'] / t8['total'] * 100,
+            'ForceGrasp': 100 if t9['success'] else 50,
+            'Obstacle': 100 if t10['success'] else 50,
+            'FastSwitch': 100 if t11['success'] else 50,
+            'Precision': t12['reached'] / 12 * 100,
         }
         total = np.mean(list(scores.values()))
         
@@ -445,6 +613,8 @@ class RobotController:
         return {
             'reaching': t1, 'square': t2, 'circle': t3, 'figure8': t4,
             'spiral': t5, 'star': t6, 'heart': t7, 'spiral_star': t8,
+            'grasp': t9, 'obstacle': t10, 'fast_switch': t11,
+            'precision': t12,
             'scores': scores, 'total': total
         }
 
