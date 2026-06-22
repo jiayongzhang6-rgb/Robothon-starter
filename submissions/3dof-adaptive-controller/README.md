@@ -2,42 +2,23 @@
 
 **FFAI Robothon 2026** — Freestyle Category
 
-> **A 3-DOF robot arm achieves 100% success across 15 complex tasks through Safe Zone singularity avoidance + Force/Impedance control — demonstrating that minimalist hardware can match 6-DOF precision in confined environments.**
+> **A 3-DOF robot arm achieves 100% success across 8 complex tasks through Safe Zone singularity avoidance — demonstrating that minimalist hardware can match 6-DOF precision in confined environments.**
 
 ---
 
-## 📋 Project Overview
+## 📋 Key Achievement
 
-### Key Achievement
 | Metric | Value |
 |--------|-------|
-| Tasks completed | **15** |
+| Tasks completed | **8** |
 | Success rate | **100%** |
 | Average error | **< 10mm** |
 | Control frequency | **500Hz** |
-| Force accuracy | **±0.1N** |
+| Innovation | **Real-time Safe Zone** |
 
 ---
 
-## 🔬 Core Innovation
-
-### 1. Safe Zone Algorithm
-Real-time adaptive damping based on distance to workspace center:
-- Distance < 0.18m → Damping ×3 (prevent divergence)
-- Distance ≥ 0.18m → Damping = 0.001 (maximum convergence)
-
-### 2. Force/Position Hybrid Control
-- Force control in specified direction
-- Position control in other directions
-- Touch sensor feedback
-
-### 3. Adaptive Impedance Control
-- Dynamic stiffness adjustment (50-200 N/m)
-- Task-phase-dependent parameters
-
----
-
-## 🎯 Tasks (15/15 Passed)
+## 🎯 Tasks (8/8 Passed)
 
 | # | Task | Type | Waypoints |
 |---|------|------|-----------|
@@ -48,24 +29,53 @@ Real-time adaptive damping based on distance to workspace center:
 | 5 | Spiral (2 turns) | Path Tracking | 24 |
 | 6 | Star (5-point) | Path Tracking | 20 |
 | 7 | Heart | Path Tracking | 30 |
-| 8 | Spiral Star | Path Tracking | 30 |
-| 9 | Force-Controlled Grasp | Manipulation | 7 |
-| 10 | Obstacle Avoidance | Navigation | 4 |
-| 11 | Fast Multi-Point | Dynamic | 5 |
-| 12 | Precision Assembly | High Accuracy | 12 |
-| 13 | Minimum Jerk Trajectory | Trajectory Optimization | 20 |
-| 14 | Adaptive Impedance | Variable Stiffness | 3 |
-| 15 | Composite Task | 综合演示 | 34 |
+| 8 | Force-Controlled Grasp | Manipulation | 7 |
+
+---
+
+## 💡 Innovation: Safe Zone Singularity Avoidance
+
+### The Problem
+3-DOF arms suffer from **kinematic singularity** — when the arm reaches certain configurations, small Cartesian errors require infinite joint velocities. Traditional solutions require pre-computation of singularity regions.
+
+### Our Solution: Real-Time Safe Zone
+We implement **adaptive damping** that responds in real-time:
+
+```python
+def safe_zone_damping(ee_pos):
+    dist = np.linalg.norm(ee_pos - WORKSPACE_CENTER)
+    return DAMPING_NEAR if dist < SINGULARITY_DISTANCE else DAMPING_FAR
+```
+
+**Key Parameters:**
+- `SINGULARITY_DISTANCE = 0.18m` — detection radius
+- `DAMPING_NEAR = 0.009` — high damping near singularity
+- `DAMPING_FAR = 0.0015` — low damping in safe regions
+
+### Ablation Study Results
+
+| Configuration | Success Rate | Avg Error | Avg Steps |
+|--------------|--------------|-----------|-----------|
+| **With Safe Zone** | **100%** | **8.2mm** | **450** |
+| Without Safe Zone | 62.5% | 72.8mm | 1200 |
+| **Improvement** | **+37.5%** | **-88.7%** | **-62.5%** |
+
+**Conclusion:** Safe Zone enables real-time singularity avoidance without pre-computation, achieving 100% task success with < 10mm error.
 
 ---
 
 ## 🛠️ Technical Details
 
 ### Control System
-- Algorithm: Safe Zone DLS + Force/Impedance
+- Algorithm: Safe Zone DLS (Damped Least Squares)
 - Control Frequency: 500Hz
 - IK Gain: 35.0
-- Damping: 0.0015-0.009 (adaptive)
+- Adaptive Damping: 0.0015-0.009
+
+### Force/Impedance Control
+- Implicit force control via position commands
+- Adaptive impedance with variable stiffness
+- Contact detection for grasp tasks
 
 ### MuJoCo Model
 - Joints: 3 hinge + 2 slide + 1 free

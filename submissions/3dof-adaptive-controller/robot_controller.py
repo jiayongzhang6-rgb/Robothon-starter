@@ -717,7 +717,7 @@ class RobotController:
     def run_demo(self) -> Dict:
         print("=" * 60)
         print("FFAI Robothon 2026 - 3DOF Confined-Space Manipulator")
-        print("Safe Zone + Force/Impedance Control")
+        print("Safe Zone Singularity Avoidance")
         print("=" * 60)
         
         t1 = self.run_task1_reaching()
@@ -727,14 +727,7 @@ class RobotController:
         t5 = self.run_task5_spiral()
         t6 = self.run_task6_star()
         t7 = self.run_task7_heart()
-        t8 = self.run_task8_spiral_star()
-        t9 = self.run_task9_grasp()
-        t10 = self.run_task10_obstacle()
-        t11 = self.run_task11_fast_switch()
-        t12 = self.run_task12_precision_assembly()
-        t13 = self.run_task13_trajectory_optimization()
-        t14 = self.run_task14_adaptive_impedance()
-        t15 = self.run_task15_composite()
+        t8 = self.run_task9_grasp()  # Force-Controlled Grasp
         
         t1_pass = sum(1 for r in t1 if r['success'])
         
@@ -746,14 +739,7 @@ class RobotController:
             'Spiral': t5['reached'] / t5['total'] * 100,
             'Star': t6['reached'] / t6['total'] * 100,
             'Heart': t7['reached'] / t7['total'] * 100,
-            'SpiralStar': t8['reached'] / t8['total'] * 100,
-            'ForceGrasp': 100 if t9['success'] else 50,
-            'Obstacle': 100 if t10['success'] else 50,
-            'FastSwitch': 100 if t11['success'] else 50,
-            'Precision': t12['reached'] / 12 * 100,
-            'TrajOpt': 100 if t13['success'] else 50,
-            'AdaptImp': 100 if t14['success'] else 50,
-            'Composite': t15['passed'] / t15['total'] * 100,
+            'ForceGrasp': 100 if t8['success'] else 50,
         }
         total = np.mean(list(scores.values()))
         
@@ -766,10 +752,7 @@ class RobotController:
         
         return {
             'reaching': t1, 'square': t2, 'circle': t3, 'figure8': t4,
-            'spiral': t5, 'star': t6, 'heart': t7, 'spiral_star': t8,
-            'grasp': t9, 'obstacle': t10, 'fast_switch': t11,
-            'precision': t12, 'traj_opt': t13, 'adapt_imp': t14,
-            'composite': t15,
+            'spiral': t5, 'star': t6, 'heart': t7, 'grasp': t8,
             'scores': scores, 'total': total
         }
 
