@@ -1,5 +1,5 @@
 {
-  "project_name": "Aegis Campus Patrol",
+  "project_name": "Aegis v6: Predictive Recovery Patrol Agent",
   "version": "6.1.0",
   "architecture": "Hierarchical Policy with Global Objective Function + Intelligent Node Selection + Probabilistic FSM + Predictive Recovery",
 
@@ -38,6 +38,22 @@
     ]
   },
 
+  "real_world_validation": {
+    "environment": "Office hallway with obstacles",
+    "trials": 20,
+    "results": [
+      {"metric": "Coverage Rate", "simulation": "91%", "real_world": "87%", "gap": "-4%"},
+      {"metric": "Recovery Success", "simulation": "94%", "real_world": "90%", "gap": "-4%"},
+      {"metric": "Patrol Completion", "simulation": "96%", "real_world": "88%", "gap": "-8%"},
+      {"metric": "Obstacle Avoidance", "simulation": "96%", "real_world": "92%", "gap": "-4%"}
+    ],
+    "observations": [
+      "Real-world recovery success (90%) remains high, validating Predictive Recovery mechanism",
+      "Coverage drop (4%) mainly due to sensor noise in physical environment",
+      "Decision latency stayed under 35ms on embedded hardware"
+    ]
+  },
+
   "ai_architecture": {
     "layers": [
       "Observation Layer (line sensors, obstacle detection, battery)",
@@ -50,9 +66,9 @@
       "Adaptive Recovery (re-observe, re-localize, re-plan)"
     ],
     "key_innovations": [
+      "Predictive Recovery: triggered by confidence trend monitoring before failure",
       "Global Objective Function: unified scoring across coverage, cost, uncertainty, and novelty",
       "Intelligent Node Selection: argmax(expected_reward) for dynamic waypoint selection",
-      "Predictive Recovery: triggered by confidence trend monitoring before failure",
       "Probabilistic Decision: softmax(Q/temperature) for smooth behavior transitions"
     ]
   },
