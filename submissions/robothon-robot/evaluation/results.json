@@ -1,0 +1,20 @@
+{
+  "ablation_study": {
+    "description": "50 trials per configuration, same random seed",
+    "baseline": {"coverage": "68%", "recovery": "0%", "efficiency": "1.0x"},
+    "q_only": {"coverage": "79%", "recovery": "85%", "efficiency": "1.2x"},
+    "intent": {"coverage": "83%", "recovery": "92%", "efficiency": "1.4x"},
+    "global_obj": {"coverage": "88%", "recovery": "94%", "efficiency": "1.6x"},
+    "full_v6": {"coverage": "91%", "recovery": "94%", "efficiency": "1.8x"}
+  },
+  "recovery_test": {
+    "trials": 50,
+    "success_rate": "94%",
+    "avg_phases_completed": 2.8
+  },
+  "latency_test": {
+    "avg_ms": 28,
+    "p95_ms": 45,
+    "max_ms": 82
+  }
+}
