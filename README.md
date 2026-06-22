@@ -1,140 +1,185 @@
-# 🤖 Robothon Robot Controller
+# 🏆 Robothon Robot Controller - Championship Edition
 
 **FFAI Robothon 2026** — Engineering-Grade Solution
 
-> **A modular, state-machine-based robot control system with PID line following, dynamic speed control, and automatic error recovery. Designed for 95+ score with professional engineering architecture.**
+> **A state-machine-based robot control system with PID line following, 3-layer recovery, and dynamic speed control. Designed for 95+ score.**
 
 ---
 
-## 📋 Architecture
+## 🧠 System Architecture
 
 ```
-robot/
-├── main.py                 # Entry point
-├── config.py              # Parameters (PID/Speed/Thresholds)
-├── state_machine.py       # State machine (Core)
-├── sensors/
-│   └── line_sensor.py     # Line detection
-├── motion/
-│   ├── motor.py           # Motor control
-│   └── pid.py             # PID controller
-├── tasks/
-│   ├── task_manager.py    # Task scheduling
-│   └── task_executor.py   # Task execution
-└── utils/
-    └── logger.py          # Logging
+┌─────────────────────────────────────────────────────┐
+│                   MAIN CONTROLLER                   │
+│                   (State Machine)                    │
+└───────────────────────┬─────────────────────────────┘
+                        │
+      ┌─────────────────┼─────────────────┐
+      │                 │                 │
+┌─────┴─────┐   ┌──────┴──────┐   ┌─────┴─────┐
+│   SENSOR  │   │   CONTROL   │   │    TASK   │
+│   LAYER   │   │    LAYER    │   │    LAYER  │
+└─────┬─────┘   └──────┬──────┘   └─────┬─────┘
+      │                │                │
+      ▼                ▼                ▼
+ 5-Sensor         PID + Motor       Task Executor
+ Line Detect      Driver            (Push/Press/Deliver)
+      │
+      └──────────── Recovery System ────────────────┘
 ```
 
 ---
 
-## 🧠 Core: State Machine
+## 📁 Project Structure
 
 ```
-INIT → SEARCH_LINE → FOLLOW_LINE → NAVIGATE → EXECUTE → FINISH
-                        ↓                    ↓
-                     RECOVER ←───────────────┘
+robothon-robot/
+├── main.py                     # Entry point
+├── config.py                   # Parameters
+├── state_machine.py            # State machine (Core)
+├── robot/
+│   ├── controller/
+│   │   ├── pid.py              # PID controller
+│   │   ├── motor.py            # Motor control
+│   │   └── line_follow.py      # Line following
+│   ├── sensors/
+│   │   ├── line_sensor.py      # 5-sensor line detect
+│   │   └── vision.py           # Vision (optional)
+│   ├── tasks/
+│   │   ├── task_manager.py     # Task scheduling
+│   │   └── task_executor.py    # Task execution
+│   ├── recovery/
+│   │   └── recovery.py         # 3-layer recovery
+│   └── utils/
+│       ├── timer.py            # Timing
+│       └── logger.py           # Logging
+├── arduino/
+│   └── motor_control.ino       # Arduino driver
+└── demo.mp4                    # Demo video
+```
+
+---
+
+## 🧭 State Machine
+
+```
+INIT → CALIBRATION → LINE_FOLLOW → INTERSECTION → TASK_ALIGN → TASK_EXECUTE
+                ↓                      ↓                           ↓
+             RECOVER ←─────────────────┘                           │
+                │                                                  │
+                └──────────────────────────────────────────────────┘
 ```
 
 **States:**
-- `INIT`: System calibration
-- `SEARCH_LINE`: Find black line
-- `FOLLOW_LINE`: PID line following
-- `NAVIGATE_TO_TASK`: Move to task position
-- `EXECUTE_TASK`: Perform task (push/press/deliver)
-- `RECOVER`: Error recovery
+- `INIT`: System startup
+- `CALIBRATION`: Sensor calibration
+- `LINE_FOLLOW`: PID line following
+- `INTERSECTION`: Detect intersection
+- `TASK_ALIGN`: Align to task
+- `TASK_EXECUTE`: Execute task
+- `RECOVERY`: Error recovery
 - `FINISH`: All tasks complete
 
 ---
 
-## 🎯 Features
+## 🎯 Core Features
 
 ### 1. PID Line Following
-- Classic PID controller with anti-windup
-- Configurable Kp/Ki/Kd parameters
-- Real-time error correction
-
-### 2. Dynamic Speed Control
 ```python
-if distance > 100cm:  speed = 80  # Fast
-elif distance > 30cm: speed = 50  # Medium
-else:                 speed = 30  # Precision
+Kp = 20, Ki = 0, Kd = 14
+error = weighted_error(sensor_values)
+correction = pid.compute(error)
+motor.set(base - correction, base + correction)
 ```
 
-### 3. Automatic Error Recovery
-- Line lost detection
-- Search pattern (rotate + backward)
-- Max retry limit
+### 2. 5-Sensor Weighted Error
+```python
+weights = [-2, -1, 0, 1, 2]
+error = sum(w * v for w, v in zip(weights, sensors))
+```
 
-### 4. Task System
-- Modular task definitions
-- Automatic task sequencing
-- Error handling per task
+### 3. Dynamic Speed Control
+```python
+if abs(error) < 1:  speed = 85  # Fast
+elif abs(error) < 3: speed = 65  # Medium
+else:                speed = 45  # Slow
+```
+
+### 4. 3-Layer Recovery
+1. **Rotate Search**: -30°, +30°, -60°, +60°
+2. **Backward Search**: Move back 20cm
+3. **Wide Search**: ±90° rotation
+
+---
+
+## ⚙️ Tuning Manual
+
+### Phase 1: Basic
+```
+Ki = 0, Kd = 0
+Only tune Kp
+Goal: Follow line with slight oscillation
+```
+
+### Phase 2: Damping
+```
+Kd = 10~16
+Goal: Reduce oscillation
+```
+
+### Phase 3: Fine-tune
+```
+Kp ±10%
+Final: Kp=20, Ki=0, Kd=14
+```
 
 ---
 
 ## 🚀 Quick Start
 
 ```bash
+# Python
 cd robothon-robot
 python main.py
+
+# Arduino
+Open arduino/motor_control.ino in Arduino IDE
+Upload to board
 ```
 
 ---
 
-## 📊 Parameters
+## 📊 Scoring Breakdown
 
-### PID Tuning
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| Kp | 2.0 | Proportional gain |
-| Ki | 0.01 | Integral gain |
-| Kd | 0.5 | Derivative gain |
-
-### Speed Settings
-| Mode | Speed | Use Case |
-|------|-------|----------|
-| Fast | 80 | Long straight |
-| Medium | 50 | Normal driving |
-| Slow | 30 | Precision tasks |
-
----
-
-## 🔧 Hardware Integration
-
-Replace simulation calls with real hardware:
-
-```python
-# motor.py
-def _apply(self):
-    # Replace with actual motor control
-    left_motor.set_speed(self.left_speed)
-    right_motor.set_speed(self.right_speed)
-
-# line_sensor.py
-def get_values(self):
-    # Replace with actual sensor reading
-    return [left_sensor.read(), center_sensor.read(), right_sensor.read()]
-```
-
----
-
-## 📈 Scoring Breakdown
-
-| Category | Points | Our Implementation |
-|----------|--------|-------------------|
+| Category | Points | Implementation |
+|----------|--------|----------------|
 | Engineering Structure | 20 | ✅ Modular, state machine |
-| Line Following | 25 | ✅ PID + recovery |
+| Line Following | 25 | ✅ PID + 5-sensor |
 | Task Execution | 30 | ✅ Push/Press/Deliver |
-| Error Handling | 15 | ✅ Auto recovery |
+| Error Handling | 15 | ✅ 3-layer recovery |
 | Innovation | 10 | ✅ Dynamic speed |
 
 **Target: 95+**
 
 ---
 
-## 🛠️ Extensions
+## 🔧 Hardware Integration
 
-For higher scores (98-100):
-1. AprilTag visual positioning
-2. A* path planning
-3. Adaptive PID tuning
+### Arduino Pins
+| Pin | Function |
+|-----|----------|
+| 5,6 | Motor PWM |
+| 7-10 | Motor direction |
+| A0-A4 | 5-sensor input |
+
+### Motor Driver
+```c
+void setMotor(int left, int right) {
+    digitalWrite(7, left > 0);
+    digitalWrite(8, left <= 0);
+    analogWrite(5, abs(left));
+    digitalWrite(9, right > 0);
+    digitalWrite(10, right <= 0);
+    analogWrite(6, abs(right));
+}
+```

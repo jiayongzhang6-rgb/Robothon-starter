@@ -24,31 +24,26 @@ class TaskManager:
         self.index = 0
         self.total = len(task_list)
         
+    def get_next(self):
+        """获取下一个任务"""
+        if self.index >= self.total:
+            return None
+        task = self.tasks[self.index]
+        self.index += 1
+        return task
+    
     def get_current(self):
         """获取当前任务"""
         if self.index >= self.total:
             return None
-        return self.tasks[self.index]
+        return self.tasks[self.index - 1] if self.index > 0 else None
     
-    def get_distance_to_task(self):
-        """获取到当前任务的距离"""
-        task = self.get_current()
-        if task is None:
-            return 0
-        # 实际硬件时计算真实距离
-        return 100
-    
-    def next(self):
-        """完成当前任务，进入下一个"""
-        if self.index < self.total:
-            self.tasks[self.index].completed = True
-            self.index += 1
-            
-    def skip(self):
-        """跳过当前任务"""
-        self.index += 1
-        
     def get_progress(self):
         """获取进度"""
-        completed = sum(1 for t in self.tasks if t.completed)
-        return completed / self.total if self.total > 0 else 0
+        return self.index / self.total if self.total > 0 else 0
+    
+    def reset(self):
+        """重置"""
+        self.index = 0
+        for task in self.tasks:
+            task.completed = False

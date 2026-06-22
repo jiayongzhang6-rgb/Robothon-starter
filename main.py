@@ -1,30 +1,35 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-FFAI Robothon 2026 - 主程序
-工程级机器人控制系统
+FFAI Robothon 2026 - 冠军级主程序
 """
 
-import time
-from robot.config import State, LINE_PID, TASK_PID, SPEED, TASK
-from robot.state_machine import RobotStateMachine
-from robot.motion.pid import PID
-from robot.motion.motor import MotorController
+from robot.config import State, PID as PID_CONFIG, BASE_SPEED
+from robot.state_machine import StateMachine
+from robot.controller.pid import PID
+from robot.controller.motor import MotorController
 from robot.sensors.line_sensor import LineSensor
+from robot.sensors.vision import VisionSystem
 from robot.tasks.task_manager import TaskManager, Task
 from robot.tasks.task_executor import TaskExecutor
+from robot.recovery.recovery import RecoverySystem
+from robot.utils.timer import Timer
+from robot.utils.logger import Logger
 
 
 class RobotContext:
-    """机器人上下文 - 所有模块的容器"""
+    """机器人上下文"""
     
     def __init__(self):
-        self.motors = MotorController()
-        self.sensors = LineSensor()
-        self.pid = PID(**LINE_PID)
-        self.task_pid = PID(**TASK_PID)
+        self.motor = MotorController()
+        self.sensor = LineSensor()
+        self.vision = VisionSystem()
+        self.pid = PID(**PID_CONFIG)
         self.task_manager = None
         self.task_executor = None
+        self.recovery = None
+        self.timer = Timer()
+        self.logger = Logger()
 
 
 def create_tasks():
@@ -37,31 +42,43 @@ def create_tasks():
 
 
 def main():
-    """主程序入口"""
+    """主程序"""
     print("=" * 60)
-    print("FFAI Robothon 2026 - 机器人控制系统 v1.0")
-    print("工程级架构: 状态机 + PID + 模块化")
+    print("FFAI Robothon 2026 - 冠军级机器人控制系统")
+    print("工程结构: 状态机 + PID + 三层恢复")
     print("=" * 60)
     
     # 初始化
-    context = RobotContext()
-    context.task_manager = TaskManager(create_tasks())
-    context.task_executor = TaskExecutor(context.motors, context.sensors)
+    ctx = RobotContext()
+    ctx.task_manager = TaskManager(create_tasks())
+    ctx.task_executor = TaskExecutor(ctx.motor, ctx.vision)
+    ctx.recovery = RecoverySystem(ctx.motor, ctx.sensor)
     
-    state_machine = RobotStateMachine()
+    sm = StateMachine()
     
     # 主循环
-    print("\n[MAIN] 启动机器人...")
-    while not state_machine.finished:
+    print("\n[MAIN] 启动...")
+    ctx.timer.start()
+    
+    while not sm.finished:
         try:
-            state_machine.update(context)
-            time.sleep(0.01)  # 100Hz控制频率
+            sm.update(ctx)
+            
+            # 状态输出
+            if sm.state == State.LINE_FOLLOW:
+                error = ctx.sensor.weighted_error()
+                speed = ctx.motor.dynamic_speed(error)
+                ctx.logger.info(f"State: FOLLOW | Error: {error:.2f} | Speed: {speed}")
+            
         except KeyboardInterrupt:
             print("\n[MAIN] 用户中断")
-            context.motors.stop()
+            ctx.motor.stop()
             break
     
-    print("\n[MAIN] 程序结束")
+    # 结束
+    elapsed = ctx.timer.elapsed()
+    print(f"\n[MAIN] 完成! 用时: {elapsed:.2f}秒")
+    ctx.logger.save("robot.log")
 
 
 if __name__ == "__main__":

@@ -1,146 +1,78 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-状态机模块 - 机器人核心控制逻辑
+冠军级状态机
 """
 
-from .config import State, RECOVERY
+from .config import State
 
 
-class RobotStateMachine:
-    """机器人状态机"""
+class StateMachine:
+    """比赛级状态机"""
     
     def __init__(self):
         self.state = State.INIT
-        self.current_task = None
         self.error_count = 0
+        self.task = None
         self.finished = False
-        self.task_index = 0
         
-    def update(self, context):
-        """状态机主更新循环"""
+    def update(self, ctx):
+        """状态机主循环"""
+        
         if self.state == State.INIT:
-            self._init(context)
-        elif self.state == State.SEARCH_LINE:
-            self._search_line(context)
-        elif self.state == State.FOLLOW_LINE:
-            self._follow_line(context)
-        elif self.state == State.NAVIGATE_TO_TASK:
-            self._navigate(context)
-        elif self.state == State.EXECUTE_TASK:
-            self._execute(context)
-        elif self.state == State.RECOVER:
-            self._recover(context)
+            print("[INIT] 系统启动")
+            self.state = State.CALIBRATION
+            
+        elif self.state == State.CALIBRATION:
+            print("[CALIB] 传感器校准...")
+            ctx.sensor.calibrate()
+            self.state = State.LINE_FOLLOW
+            print("[CALIB] 校准完成")
+            
+        elif self.state == State.LINE_FOLLOW:
+            if ctx.sensor.line_lost():
+                self.error_count += 1
+                self.state = State.RECOVERY
+                print("[FOLLOW] 丢线，进入恢复")
+            elif ctx.sensor.is_intersection():
+                self.state = State.INTERSECTION
+                print("[FOLLOW] 检测到十字路口")
+            else:
+                # 正常巡线
+                from .controller.line_follow import follow
+                follow(ctx.sensor, ctx.pid, ctx.motor)
+                
+        elif self.state == State.INTERSECTION:
+            self.task = ctx.task_manager.get_next()
+            if self.task is None:
+                self.state = State.FINISH
+                print("[INTER] 所有任务完成")
+            else:
+                self.state = State.TASK_ALIGN
+                print(f"[INTER] 获取任务: {self.task.name}")
+                
+        elif self.state == State.TASK_ALIGN:
+            if ctx.vision.aligned():
+                self.state = State.TASK_EXECUTE
+                print("[ALIGN] 对齐完成")
+            else:
+                ctx.vision.align_to_task()
+                
+        elif self.state == State.TASK_EXECUTE:
+            success = ctx.task_executor.execute(self.task)
+            if success:
+                print(f"[EXEC] 任务完成: {self.task.name}")
+            else:
+                print(f"[EXEC] 任务失败: {self.task.name}")
+            self.state = State.LINE_FOLLOW
+            
+        elif self.state == State.RECOVERY:
+            ctx.recovery.run()
+            self.error_count = 0
+            self.state = State.LINE_FOLLOW
+            print("[RECOVER] 恢复完成")
+            
         elif self.state == State.FINISH:
-            self._finish(context)
-    
-    def _init(self, context):
-        """初始化状态"""
-        print("[INIT] 系统初始化...")
-        context.motors.stop()
-        context.sensors.calibrate()
-        self.state = State.SEARCH_LINE
-        print("[INIT] 初始化完成，开始搜索线")
-    
-    def _search_line(self, context):
-        """搜索黑线"""
-        print("[SEARCH] 搜索黑线...")
-        if context.sensors.detect_line():
-            self.state = State.FOLLOW_LINE
-            self.error_count = 0
-            print("[SEARCH] 检测到黑线")
-        else:
-            # 原地旋转搜索
-            context.motors.rotate(30)
-    
-    def _follow_line(self, context):
-        """巡线模式"""
-        if not context.sensors.detect_line():
-            self.error_count += 1
-            if self.error_count > RECOVERY['max_errors']:
-                self.state = State.RECOVER
-                print("[FOLLOW] 丢线过多，进入恢复")
-            return
-        
-        self.error_count = 0
-        # 获取传感器数据并计算误差
-        sensor_values = context.sensors.get_values()
-        error = context.pid.compute(sensor_values)
-        
-        # 动态速度控制
-        distance = context.task_manager.get_distance_to_task()
-        speed = self._dynamic_speed(distance)
-        
-        context.motors.set_speed(speed - error, speed + error)
-    
-    def _navigate(self, context):
-        """导航到任务点"""
-        task = context.task_manager.get_current()
-        if task is None:
-            self.state = State.FINISH
-            return
-        
-        # 检查是否到达
-        if context.sensors.is_at_position(task.position):
-            self.state = State.EXECUTE_TASK
-            print(f"[NAVIGATE] 到达任务点: {task.name}")
-        else:
-            # 继续导航
-            direction = context.sensors.get_direction(task.position)
-            context.motors.move_toward(direction)
-    
-    def _execute(self, context):
-        """执行任务"""
-        task = context.task_manager.get_current()
-        if task is None:
-            self.state = State.FINISH
-            return
-        
-        success = context.task_executor.execute(task)
-        if success:
-            print(f"[EXECUTE] 任务完成: {task.name}")
-            context.task_manager.next()
-            self.state = State.NAVIGATE_TO_TASK
-        else:
-            self.error_count += 1
-            if self.error_count > TASK['max_retries']:
-                print(f"[EXECUTE] 任务失败: {task.name}")
-                context.task_manager.skip()
-                self.state = State.NAVIGATE_TO_TASK
-    
-    def _recover(self, context):
-        """恢复模式"""
-        print("[RECOVER] 执行恢复...")
-        context.motors.stop()
-        
-        # 尝试搜索黑线
-        for angle in RECOVERY['search_angles']:
-            context.motors.rotate(angle)
-            if context.sensors.detect_line():
-                self.state = State.FOLLOW_LINE
-                self.error_count = 0
-                print("[RECOVER] 恢复成功")
-                return
-        
-        # 后退再找
-        context.motors.backward(RECOVERY['backward_distance'])
-        if context.sensors.detect_line():
-            self.state = State.FOLLOW_LINE
-            self.error_count = 0
-        else:
-            self.state = State.SEARCH_LINE
-    
-    def _finish(self, context):
-        """完成状态"""
-        print("[FINISH] 所有任务完成!")
-        context.motors.stop()
-        self.finished = True
-    
-    def _dynamic_speed(self, distance):
-        """动态速度控制"""
-        if distance > 100:
-            return SPEED['fast']
-        elif distance > 30:
-            return SPEED['medium']
-        else:
-            return SPEED['slow']
+            print("[FINISH] 比赛结束!")
+            ctx.motor.stop()
+            self.finished = True

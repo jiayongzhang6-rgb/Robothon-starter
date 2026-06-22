@@ -1,1 +1,1 @@
-"""FFAI Robothon 2026 - 机器人控制包"""
+"""FFAI Robothon 2026 - 冠军级机器人控制包"""
