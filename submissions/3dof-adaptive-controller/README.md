@@ -37,7 +37,7 @@ Real-time adaptive damping based on distance to workspace center:
 
 ---
 
-## 🎯 Tasks (12/12 Passed)
+## 🎯 Tasks (15/15 Passed)
 
 | # | Task | Type | Waypoints |
 |---|------|------|-----------|
@@ -53,6 +53,9 @@ Real-time adaptive damping based on distance to workspace center:
 | 10 | Obstacle Avoidance | Navigation | 4 |
 | 11 | Fast Multi-Point | Dynamic | 5 |
 | 12 | Precision Assembly | High Accuracy | 12 |
+| 13 | Minimum Jerk Trajectory | Trajectory Optimization | 20 |
+| 14 | Adaptive Impedance | Variable Stiffness | 3 |
+| 15 | Composite Task | 综合演示 | 34 |
 
 ---
 
@@ -61,8 +64,8 @@ Real-time adaptive damping based on distance to workspace center:
 ### Control System
 - Algorithm: Safe Zone DLS + Force/Impedance
 - Control Frequency: 500Hz
-- IK Gain: 42.0
-- Damping: 0.001-0.006 (adaptive)
+- IK Gain: 35.0
+- Damping: 0.0015-0.009 (adaptive)
 
 ### MuJoCo Model
 - Joints: 3 hinge + 2 slide + 1 free
