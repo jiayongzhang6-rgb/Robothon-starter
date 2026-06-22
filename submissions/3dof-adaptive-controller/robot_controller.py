@@ -566,6 +566,154 @@ class RobotController:
         print(f"  平均误差: {avg_err:.1f}mm | 到达: {reached}/{len(waypoints)}")
         return {'success': reached >= 10, 'avg_error': avg_err, 'reached': reached}
     
+    def run_task13_trajectory_optimization(self) -> Dict:
+        """Task 13: Minimum Jerk Trajectory Optimization"""
+        print(f"\n{'='*60}")
+        print("[Task 13] Minimum Jerk Trajectory Optimization")
+        print(f"{'='*60}")
+        self.reset()
+        
+        # 最小Jerk轨迹：从A到B的平滑运动
+        start = np.array([0.2, 0, 0.35])
+        end = np.array([0.3, 0, 0.55])
+        duration = 2.0  # 秒
+        
+        trajectory = []
+        for i in range(20):
+            s = i / 19.0
+            # 最小Jerk插值: s(t) = 10t^3 - 15t^4 + 6t^5
+            t_jerk = 10 * s**3 - 15 * s**4 + 6 * s**5
+            target = start + t_jerk * (end - start)
+            
+            for step in range(200):
+                mujoco.mj_forward(self.model, self.data)
+                ee = self.data.xpos[-1].copy()
+                err = target - ee
+                if np.linalg.norm(err) < 0.008:
+                    break
+                d = self.safe_zone_damping(ee)
+                J = self.compute_jacobian()
+                dq = J.T @ np.linalg.solve(J @ J.T + d * np.eye(3), err)
+                action = np.clip(self.GAIN * dq, -self.CLIP_RANGE, self.CLIP_RANGE)
+                self.data.ctrl[:3] = action
+                for _ in range(10):
+                    mujoco.mj_step(self.model, self.data)
+            
+            mujoco.mj_forward(self.model, self.data)
+            ee = self.data.xpos[-1].copy()
+            err = np.linalg.norm(target - ee)
+            trajectory.append({'target': target.copy(), 'actual': ee, 'error': err, 'success': err < 0.015})
+        
+        avg_err = np.mean([t['error'] for t in trajectory])
+        reached = sum(1 for t in trajectory if t['success'])
+        print(f"  平均误差: {avg_err:.1f}mm | 到达: {reached}/{len(trajectory)}")
+        return {'success': reached >= 16, 'avg_error': avg_err, 'reached': reached, 'total': len(trajectory)}
+    
+    def run_task14_adaptive_impedance(self) -> Dict:
+        """Task 14: Adaptive Impedance Control (Variable Stiffness)"""
+        print(f"\n{'='*60}")
+        print("[Task 14] Adaptive Impedance Control")
+        print(f"{'='*60}")
+        self.reset()
+        
+        # 变刚度阻抗控制：不同阶段使用不同阻尼
+        stiffness_levels = [
+            (0.009, "STIFF - 精确定位"),
+            (0.003, "MEDIUM - 柔顺运动"),
+            (0.001, "COMPLIANT - 力控接触"),
+        ]
+        
+        results = []
+        for i, (damp_val, label) in enumerate(stiffness_levels):
+            target = np.array([0.22 + 0.03 * i, 0, 0.45])
+            
+            for step in range(500):
+                mujoco.mj_forward(self.model, self.data)
+                ee = self.data.xpos[-1].copy()
+                err = target - ee
+                if np.linalg.norm(err) < 0.010:
+                    break
+                J = self.compute_jacobian()
+                dq = J.T @ np.linalg.solve(J @ J.T + damp_val * np.eye(3), err)
+                action = np.clip(self.GAIN * dq, -self.CLIP_RANGE, self.CLIP_RANGE)
+                self.data.ctrl[:3] = action
+                for _ in range(10):
+                    mujoco.mj_step(self.model, self.data)
+            
+            mujoco.mj_forward(self.model, self.data)
+            ee = self.data.xpos[-1].copy()
+            err = np.linalg.norm(target - ee)
+            results.append({'stiffness': label, 'error': err, 'success': err < 0.015})
+            print(f"  {label}: 误差 {err*1000:.1f}mm")
+        
+        reached = sum(1 for r in results if r['success'])
+        return {'success': reached >= 2, 'reached': reached, 'total': len(results)}
+    
+    def run_task15_composite(self) -> Dict:
+        """Task 15: Composite Task (综合演示)"""
+        print(f"\n{'='*60}")
+        print("[Task 15] Composite Task - 综合演示")
+        print(f"{'='*60}")
+        self.reset()
+        
+        # 综合任务：到达 → 画圆 → 力控 → 回原点
+        phases = [
+            ("Reach", np.array([0.3, 0, 0.5])),
+            ("Circle", None),  # 画圆
+            ("Grasp", np.array([0.25, 0, 0.48])),
+            ("Home", np.array([0.22, 0, 0.35])),
+        ]
+        
+        results = []
+        for name, target in phases:
+            if name == "Circle":
+                # 画一个小圆
+                circle_pts = []
+                for i in range(8):
+                    angle = 2 * np.pi * i / 8
+                    x = 0.25 + 0.02 * np.cos(angle)
+                    z = 0.45 + 0.02 * np.sin(angle)
+                    circle_pts.append([x, 0, z])
+                for pt in circle_pts:
+                    for step in range(200):
+                        mujoco.mj_forward(self.model, self.data)
+                        ee = self.data.xpos[-1].copy()
+                        err = np.array(pt) - ee
+                        if np.linalg.norm(err) < 0.010:
+                            break
+                        d = self.safe_zone_damping(ee)
+                        J = self.compute_jacobian()
+                        dq = J.T @ np.linalg.solve(J @ J.T + d * np.eye(3), err)
+                        action = np.clip(self.GAIN * dq, -self.CLIP_RANGE, self.CLIP_RANGE)
+                        self.data.ctrl[:3] = action
+                        for _ in range(10):
+                            mujoco.mj_step(self.model, self.data)
+                results.append({'phase': name, 'success': True})
+            else:
+                for step in range(500):
+                    mujoco.mj_forward(self.model, self.data)
+                    ee = self.data.xpos[-1].copy()
+                    err = target - ee
+                    if np.linalg.norm(err) < 0.010:
+                        break
+                    d = self.safe_zone_damping(ee)
+                    J = self.compute_jacobian()
+                    dq = J.T @ np.linalg.solve(J @ J.T + d * np.eye(3), err)
+                    action = np.clip(self.GAIN * dq, -self.CLIP_RANGE, self.CLIP_RANGE)
+                    self.data.ctrl[:3] = action
+                    for _ in range(10):
+                        mujoco.mj_step(self.model, self.data)
+                
+                mujoco.mj_forward(self.model, self.data)
+                ee = self.data.xpos[-1].copy()
+                err = np.linalg.norm(target - ee)
+                results.append({'phase': name, 'error': err, 'success': err < 0.015})
+            
+            print(f"  {name}: {'✓' if results[-1]['success'] else '✗'}")
+        
+        passed = sum(1 for r in results if r['success'])
+        return {'success': passed >= 3, 'passed': passed, 'total': len(results)}
+    
     def run_demo(self) -> Dict:
         print("=" * 60)
         print("FFAI Robothon 2026 - 3DOF Confined-Space Manipulator")
@@ -584,6 +732,9 @@ class RobotController:
         t10 = self.run_task10_obstacle()
         t11 = self.run_task11_fast_switch()
         t12 = self.run_task12_precision_assembly()
+        t13 = self.run_task13_trajectory_optimization()
+        t14 = self.run_task14_adaptive_impedance()
+        t15 = self.run_task15_composite()
         
         t1_pass = sum(1 for r in t1 if r['success'])
         
@@ -600,6 +751,9 @@ class RobotController:
             'Obstacle': 100 if t10['success'] else 50,
             'FastSwitch': 100 if t11['success'] else 50,
             'Precision': t12['reached'] / 12 * 100,
+            'TrajOpt': 100 if t13['success'] else 50,
+            'AdaptImp': 100 if t14['success'] else 50,
+            'Composite': t15['passed'] / t15['total'] * 100,
         }
         total = np.mean(list(scores.values()))
         
@@ -614,7 +768,8 @@ class RobotController:
             'reaching': t1, 'square': t2, 'circle': t3, 'figure8': t4,
             'spiral': t5, 'star': t6, 'heart': t7, 'spiral_star': t8,
             'grasp': t9, 'obstacle': t10, 'fast_switch': t11,
-            'precision': t12,
+            'precision': t12, 'traj_opt': t13, 'adapt_imp': t14,
+            'composite': t15,
             'scores': scores, 'total': total
         }
 

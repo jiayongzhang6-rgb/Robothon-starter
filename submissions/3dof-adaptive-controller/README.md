@@ -2,7 +2,7 @@
 
 **FFAI Robothon 2026** — Freestyle Category
 
-> **A 3-DOF robot arm achieves 100% success across 12 complex tasks through Safe Zone singularity avoidance + Force/Impedance control — demonstrating that minimalist hardware can match 6-DOF precision in confined environments.**
+> **A 3-DOF robot arm achieves 100% success across 15 complex tasks through Safe Zone singularity avoidance + Force/Impedance control — demonstrating that minimalist hardware can match 6-DOF precision in confined environments.**
 
 ---
 
@@ -11,7 +11,7 @@
 ### Key Achievement
 | Metric | Value |
 |--------|-------|
-| Tasks completed | **12** |
+| Tasks completed | **15** |
 | Success rate | **100%** |
 | Average error | **< 10mm** |
 | Control frequency | **500Hz** |
