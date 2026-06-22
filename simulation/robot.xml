@@ -23,14 +23,24 @@
         <material name="sensor_mat" rgba="1.0 0.3 0.3 1"/>
         <material name="top_mat" rgba="0.0 1.0 0.4 1" specular="0.6" shininess="0.6"/>
         <material name="led_mat" rgba="0.0 1.0 0.0 1"/>
+        <material name="obstacle_mat" rgba="0.9 0.2 0.2 1" specular="0.3" shininess="0.3"/>
+        <material name="wall_mat" rgba="0.6 0.6 0.6 1" specular="0.2" shininess="0.2"/>
     </asset>
     
     <worldbody>
         <!-- 地面 -->
         <geom name="ground" type="plane" size="3 3 0.1" material="ground_mat"/>
         
-        <!-- 黑线轨道 -->
-        <geom name="track" type="cylinder" size="0.1 0.001 0" pos="0 0 0.001" material="line_mat" contype="0" conaffinity="0"/>
+        <!-- 障碍物 - 触发 cautious/avoid 行为 -->
+        <geom name="obstacle_1" type="cylinder" size="0.08 0.12" pos="0.5 0.15 0.12" material="obstacle_mat" mass="2"/>
+        <geom name="obstacle_2" type="cylinder" size="0.08 0.12" pos="0.8 -0.1 0.12" material="obstacle_mat" mass="2"/>
+        <geom name="obstacle_3" type="box" size="0.06 0.06 0.1" pos="0.35 -0.2 0.1" material="obstacle_mat" mass="1.5"/>
+        <geom name="obstacle_4" type="cylinder" size="0.05 0.08" pos="1.0 0.2 0.08" material="obstacle_mat" mass="1"/>
+        
+        <!-- 边界墙 -->
+        <geom name="wall_n" type="box" size="1.5 0.02 0.1" pos="0 0.48 0.1" material="wall_mat" contype="1"/>
+        <geom name="wall_s" type="box" size="1.5 0.02 0.1" pos="0 -0.48 0.1" material="wall_mat" contype="1"/>
+        <geom name="wall_e" type="box" size="0.02 0.5 0.1" pos="1.5 0 0.1" material="wall_mat" contype="1"/>
         
         <!-- 三摄像机系统 -->
         <camera name="global_view" pos="0 0 2.8" xyaxes="1 0 0 0 1 0" fovy="70"/>
@@ -58,7 +68,7 @@
             <!-- 后端LED -->
             <geom name="led_rear" type="sphere" size="0.015" pos="-0.15 0 0" material="led_mat"/>
             
-            <!-- 左轮 - 轴沿Y方向，沿X前进 -->
+            <!-- 左轮 -->
             <body name="left_wheel" pos="0 -0.1 -0.02">
                 <joint name="left_wheel_joint" type="hinge" axis="0 1 0"/>
                 <geom name="left_wheel_geom" type="cylinder" size="0.035 0.015" euler="90 0 0" material="wheel_mat" mass="0.05"/>
@@ -89,7 +99,7 @@
         <jointvel name="right_wheel_vel" joint="right_wheel_joint"/>
     </sensor>
     
-    <!-- 执行器 - 力矩控制 -->
+    <!-- 执行器 -->
     <actuator>
         <motor name="left_motor" joint="left_wheel_joint" gear="50" ctrlrange="-10 10" ctrllimited="true"/>
         <motor name="right_motor" joint="right_wheel_joint" gear="50" ctrlrange="-10 10" ctrllimited="true"/>
