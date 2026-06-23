@@ -1,0 +1,27 @@
+{
+  "uuid": "d2f04863-7d64-4c8b-9a2e-1f5b3c8d9e0a",
+  "team_name": "3DOF",
+  "project_name": "AEGIS v6: Predictive Recovery Patrol Agent",
+  "category": "Autonomous Navigation",
+  "participants": [
+    {
+      "name": "笑笑",
+      "role": "Lead Developer",
+      "github": "jiayongzhang6-rgb"
+    }
+  ],
+  "submission": {
+    "demo_video": "demo.mp4",
+    "duration_seconds": 60,
+    "resolution": "1920x1080",
+    "fps": 30
+  },
+  "key_features": [
+    "Predictive failure detection",
+    "Autonomous recovery replanning",
+    "Risk terrain visualization",
+    "Motion-first intelligence demonstration",
+    "Deterministic reproducibility (seed=42)"
+  ],
+  "timestamp": "2026-06-23T11:00:00Z"
+}
