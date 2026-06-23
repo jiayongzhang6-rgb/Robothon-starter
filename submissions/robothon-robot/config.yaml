@@ -1,0 +1,33 @@
+seed: 42
+
+video:
+  fps: 30
+  duration: 60
+
+world:
+  size: [20, 20]
+  obstacles: 12
+
+robot:
+  start: [2, 2]
+  speed: 0.5
+
+events:
+  - t: 0
+    type: start_patrol
+    
+  - t: 10
+    type: risk_emerge
+    region: [10, 10]
+    
+  - t: 18
+    type: confidence_drop
+    
+  - t: 25
+    type: predictive_failure
+    
+  - t: 30
+    type: recovery_trigger
+    
+  - t: 45
+    type: recovery_complete
