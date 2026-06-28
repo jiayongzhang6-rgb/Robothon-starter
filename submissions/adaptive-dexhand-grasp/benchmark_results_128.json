@@ -1,0 +1,57 @@
+{
+  "closed_loop": {
+    "n_trials": 128,
+    "successes": 128,
+    "success_rate": 1.0,
+    "wilson_ci_lower": 0.9708630437264916,
+    "wilson_ci_upper": 0.9708630437264916,
+    "mean_force": 2.0503757864648335,
+    "std_force": 0.38953706063121823,
+    "mean_recovery_ms": 3.874264469971681,
+    "damage_count": 0
+  },
+  "open_loop": {
+    "n_trials": 128,
+    "successes": 113,
+    "success_rate": 0.8828125,
+    "wilson_ci_lower": 0.8156338413466524,
+    "wilson_ci_upper": 0.8156338413466524,
+    "mean_force": 4.000281349729575,
+    "std_force": 0.3027088840906192,
+    "mean_recovery_ms": 0.0,
+    "damage_count": 0
+  },
+  "no_tactile": {
+    "n_trials": 128,
+    "successes": 104,
+    "success_rate": 0.8125,
+    "wilson_ci_lower": 0.7361508192928257,
+    "wilson_ci_upper": 0.7361508192928257,
+    "mean_force": 3.057761066052863,
+    "std_force": 0.3683757895114099,
+    "mean_recovery_ms": 4.108216542317629,
+    "damage_count": 0
+  },
+  "no_slip_recovery": {
+    "n_trials": 128,
+    "successes": 123,
+    "success_rate": 0.9609375,
+    "wilson_ci_lower": 0.9118129792331631,
+    "wilson_ci_upper": 0.9118129792331631,
+    "mean_force": 2.5002813497295753,
+    "std_force": 0.3027088840906192,
+    "mean_recovery_ms": 0.0,
+    "damage_count": 0
+  },
+  "no_adaptive": {
+    "n_trials": 128,
+    "successes": 125,
+    "success_rate": 0.9765625,
+    "wilson_ci_lower": 0.9333562549485678,
+    "wilson_ci_upper": 0.9333562549485678,
+    "mean_force": 2.039011066052862,
+    "std_force": 0.34031438494316935,
+    "mean_recovery_ms": 4.108216542317629,
+    "damage_count": 0
+  }
+}

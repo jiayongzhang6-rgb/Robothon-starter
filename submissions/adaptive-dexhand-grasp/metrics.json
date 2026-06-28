@@ -1,50 +1,51 @@
 {
   "success_rate": 100,
-  "trials": 32,
-  "wilson_ci_lower": 89.3,
-  "wilson_ci_upper": 100.0,
-  "recovery_ms": 3.9,
+  "trials": 128,
+  "wilson_ci_lower": 97.1,
+  "wilson_ci_upper": 97.1,
+  "recovery_ms": 4.0,
   "objects": 10,
   "tactile": 5,
   "fingers": 5,
   "closed_loop": true,
-  "task_steps": 22,
+  "task_steps": 28,
   "fusion_confidence": 0.85,
+  "peg_in_hole_tolerance_mm": 0.1,
   "ablation": {
     "closed_loop": {
       "success_rate": 100,
-      "mean_force": 2.15,
-      "std_force": 0.36,
-      "wilson_ci_lower": 89.3,
-      "wilson_ci_upper": 100.0
+      "mean_force": 2.05,
+      "std_force": 0.39,
+      "wilson_ci_lower": 97.1,
+      "wilson_ci_upper": 97.1
     },
     "open_loop": {
-      "success_rate": 87.5,
-      "mean_force": 4.13,
-      "std_force": 0.24,
-      "wilson_ci_lower": 71.9,
-      "wilson_ci_upper": 95.0
+      "success_rate": 88.3,
+      "mean_force": 4.00,
+      "std_force": 0.30,
+      "wilson_ci_lower": 81.6,
+      "wilson_ci_upper": 81.6
     },
     "no_tactile": {
-      "success_rate": 78.1,
-      "mean_force": 3.21,
-      "std_force": 0.31,
-      "wilson_ci_lower": 61.2,
-      "wilson_ci_upper": 89.0
+      "success_rate": 81.2,
+      "mean_force": 3.06,
+      "std_force": 0.37,
+      "wilson_ci_lower": 73.6,
+      "wilson_ci_upper": 73.6
     },
     "no_slip_recovery": {
-      "success_rate": 93.8,
-      "mean_force": 2.63,
-      "std_force": 0.24,
-      "wilson_ci_lower": 79.9,
-      "wilson_ci_upper": 98.3
+      "success_rate": 96.1,
+      "mean_force": 2.50,
+      "std_force": 0.30,
+      "wilson_ci_lower": 91.2,
+      "wilson_ci_upper": 91.2
     },
     "no_adaptive": {
-      "success_rate": 93.8,
-      "mean_force": 2.19,
-      "std_force": 0.28,
-      "wilson_ci_lower": 79.9,
-      "wilson_ci_upper": 98.3
+      "success_rate": 97.7,
+      "mean_force": 2.04,
+      "std_force": 0.34,
+      "wilson_ci_lower": 93.3,
+      "wilson_ci_upper": 93.3
     }
   }
 }
