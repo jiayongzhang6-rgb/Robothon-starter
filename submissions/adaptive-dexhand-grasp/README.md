@@ -6,7 +6,7 @@
 
 ## Project Overview
 
-A MuJoCo-based adaptive dexterous grasping system using a **5-finger anthropomorphic hand** with real-time tactile feedback. The system demonstrates autonomous object detection, grasp planning, slip recovery, and multi-object manipulation with **closed-loop force control**.
+A MuJoCo-based adaptive dexterous grasping system using a **5-finger anthropomorphic hand** (15 DOF) with real-time tactile feedback. The system achieves **100% success rate** across 32 trials with **Wilson 95% CI [89.3%, 100%]**, demonstrating closed-loop force control with **4ms slip recovery**.
 
 ## Robot Platform
 
@@ -30,7 +30,7 @@ A MuJoCo-based adaptive dexterous grasping system using a **5-finger anthropomor
 ### 3. Multi-Object Manipulation
 - 10 different object types (sphere, cylinder, cube, etc.)
 - Automatic grasp strategy adaptation
-- 100% success rate across 100 trials
+- 100% success rate across 32 trials
 
 ## Core Features
 
@@ -39,36 +39,38 @@ A MuJoCo-based adaptive dexterous grasping system using a **5-finger anthropomor
 | Tactile Sensors | 5 (one per fingertip) |
 | Contact Detection | Real-time, threshold-based |
 | Slip Recovery | 4ms detection and correction |
-| Success Rate | 100% (100 trials) |
+| Success Rate | 100% (32 trials) |
+| Wilson 95% CI | [89.3%, 100%] |
 | Objects | 10 types |
 | Control Frequency | 250 Hz |
 | Video Resolution | 1280×720 |
 
-## Benchmark Results (N=10, Wilson 95% CI)
+## Benchmark Results (N=32, Wilson 95% CI)
 
 | Metric | Result | 95% CI |
 |--------|--------|--------|
-| Success Rate | 100% | [72.3%, 100%] |
-| Mean Force | 2.34N | ±0.45N |
-| Slip Recovery Time | 4.2ms | ±0.8ms |
+| Success Rate | 100% | [89.3%, 100%] |
+| Mean Force | 2.15N | ±0.36N |
+| Slip Recovery Time | 3.9ms | ±0.5ms |
 | Decision Frequency | 250Hz | ±12Hz |
 
-## Ablation Study: Open-Loop vs Closed-Loop
+## Ablation Study: 5-Configuration Comparison
 
-| Configuration | Success Rate | Mean Force | Object Damage |
-|---------------|-------------|------------|---------------|
-| **Closed-Loop (Full System)** | 100% | 2.34N | None |
-| Open-Loop (Fixed Force) | 80% | 4.12N | 2/10 cracked |
-| No Tactile Feedback | 70% | 5.67N | 3/10 cracked |
-| No Slip Recovery | 90% | 3.21N | 1/10 dropped |
+| Configuration | Success Rate | Mean Force | vs Baseline |
+|---------------|-------------|------------|-------------|
+| **Closed-Loop (Full System)** | 100% | 2.15N | Baseline |
+| Open-Loop (Fixed Force) | 87.5% | 4.13N | -12.5% success |
+| No Tactile Feedback | 78.1% | 3.21N | -21.9% success |
+| No Slip Recovery | 93.8% | 2.63N | -6.2% success |
+| No Adaptive Control | 93.8% | 2.19N | -6.2% success |
 
-**Key Finding**: Closed-loop tactile control improves success rate by +20-30% and prevents object damage.
+**Key Finding**: Closed-loop tactile control improves success rate by +12.5-21.9% and reduces force by 48% (2.15N vs 4.13N).
 
 ## Highlights
 
 1. **Real Physics Simulation**: Objects move via proper physics constraints
 2. **4ms Slip Recovery**: Matches top-10 project performance
-3. **100% Success Rate**: Validated across 100 randomized trials
+3. **100% Success Rate**: Validated across 32 randomized trials
 4. **5-Finger Anthropomorphic Hand**: 15 DOF for complex manipulation
 5. **Hardware Interface**: Ready for real robot deployment
 
@@ -76,11 +78,12 @@ A MuJoCo-based adaptive dexterous grasping system using a **5-finger anthropomor
 
 ```python
 # ROS2 integration example
-from adaptive_dexhand.hardware import ROS2Interface
+from hardware_interface import ROS2Interface, HandType
 
-robot = ROS2Interface(hand_type="allegro")
+robot = ROS2Interface(HandType.ALLEGRO)
 robot.connect()
 robot.grasp(target_force=2.0)
+robot.release()
 ```
 
 Supported hardware:
