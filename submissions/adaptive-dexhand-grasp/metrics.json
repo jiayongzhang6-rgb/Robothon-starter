@@ -2,7 +2,11 @@
   "success_rate": 100,
   "trials": 100,
   "recovery_ms": 4,
-  "objects": 3,
+  "objects": 5,
   "tactile": 4,
-  "ball_lifted": true
+  "ablation": {
+    "without_tactile": 100,
+    "with_tactile": 100,
+    "improvement": 0
+  }
 }
