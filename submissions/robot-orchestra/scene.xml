@@ -1,11 +1,11 @@
-<mujoco model="robot_orchestra">
+<mujoco model="robot_orchestra_v2">
   <compiler angle="radian" autolimits="true"/>
-  <option timestep="0.002" gravity="0 0 -9.81"/>
+  <option timestep="0.001" gravity="0 0 -9.81"/>
   <visual><global offwidth="1280" offheight="720"/></visual>
 
   <default>
-    <joint armature="0.01" damping="0.5"/>
-    <geom condim="4" friction="0.8 0.005 0.0001"/>
+    <joint armature="0.01" damping="1.0"/>
+    <geom condim="4" friction="0.5 0.005 0.0001"/>
   </default>
 
   <asset>
@@ -21,7 +21,6 @@
     <material name="green" rgba="0.1 0.7 0.3 1"/>
     <material name="blue" rgba="0.1 0.3 0.9 1"/>
     <material name="white" rgba="0.95 0.95 0.95 1"/>
-    <material name="black" rgba="0.08 0.08 0.08 1"/>
     <material name="arm_color" rgba="0.3 0.3 0.35 1" specular="0.4" shininess="0.4"/>
   </asset>
 
@@ -32,60 +31,55 @@
 
     <!-- 舞台 -->
     <body name="stage_body" pos="0 0 0.03">
-      <geom name="stage_geom" type="box" size="1.0 0.7 0.03" material="wood" mass="50"/>
+      <geom type="box" size="1.0 0.7 0.03" material="wood" mass="50"/>
     </body>
 
-    <!-- ===== 鼓组 (左侧) ===== -->
-    <body name="snare" pos="-0.5 0.0 0.12">
+    <!-- ===== 鼓组 (固定) ===== -->
+    <body name="snare" pos="-0.5 0.0 0.12" mocap="true">
       <geom type="cylinder" size="0.08 0.035" material="white" mass="1.5"/>
-      <geom type="cylinder" size="0.08 0.002" pos="0 0 0.035" material="skin"/>
+      <geom type="cylinder" size="0.08 0.002" pos="0 0 0.035" material="skin" solref="0.001 1"/>
     </body>
-    <body name="kick" pos="-0.5 -0.2 0.18">
+    <body name="kick" pos="-0.5 -0.2 0.18" mocap="true">
       <geom type="cylinder" size="0.12 0.08" material="white" mass="2"/>
-      <geom type="cylinder" size="0.12 0.002" pos="0 0 0.08" material="skin"/>
+      <geom type="cylinder" size="0.12 0.002" pos="0 0 0.08" material="skin" solref="0.001 1"/>
     </body>
-    <body name="hihat" pos="-0.35 0.15 0.2">
+    <body name="hihat" pos="-0.35 0.15 0.2" mocap="true">
       <geom type="cylinder" size="0.06 0.003" material="brass" mass="0.3"/>
     </body>
 
-    <!-- ===== 木琴 (中间) ===== -->
-    <body name="xylo_base" pos="0.0 0.0 0.08">
+    <!-- ===== 木琴 (固定) ===== -->
+    <body name="xylo_base" pos="0.0 0.0 0.08" mocap="true">
       <geom type="box" size="0.22 0.005 0.003" pos="0 0.06 0" material="metal"/>
       <geom type="box" size="0.22 0.005 0.003" pos="0 -0.06 0" material="metal"/>
-      <geom type="box" size="0.035 0.05 0.006" pos="-0.16 0 0.006" material="red"/>
-      <geom type="box" size="0.033 0.05 0.006" pos="-0.09 0 0.006" material="orange"/>
-      <geom type="box" size="0.031 0.05 0.006" pos="-0.02 0 0.006" material="yellow"/>
-      <geom type="box" size="0.029 0.05 0.006" pos="0.05 0 0.006" material="green"/>
-      <geom type="box" size="0.027 0.05 0.006" pos="0.12 0 0.006" material="blue"/>
+      <geom type="box" size="0.035 0.05 0.006" pos="-0.16 0 0.006" material="red" solref="0.001 1"/>
+      <geom type="box" size="0.033 0.05 0.006" pos="-0.09 0 0.006" material="orange" solref="0.001 1"/>
+      <geom type="box" size="0.031 0.05 0.006" pos="-0.02 0 0.006" material="yellow" solref="0.001 1"/>
+      <geom type="box" size="0.029 0.05 0.006" pos="0.05 0 0.006" material="green" solref="0.001 1"/>
+      <geom type="box" size="0.027 0.05 0.006" pos="0.12 0 0.006" material="blue" solref="0.001 1"/>
     </body>
 
-    <!-- ===== 镲片+三角铁 (右侧) ===== -->
-    <body name="cymbal" pos="0.45 0.0 0.25">
+    <!-- ===== 镲片+三角铁 (固定) ===== -->
+    <body name="cymbal" pos="0.45 0.0 0.25" mocap="true">
       <geom type="cylinder" size="0.08 0.003" material="brass" mass="0.2"/>
     </body>
-    <body name="triangle_inst" pos="0.55 -0.15 0.22">
+    <body name="triangle_inst" pos="0.55 -0.15 0.22" mocap="true">
       <geom type="capsule" size="0.004 0.025" pos="0 0.015 0" material="metal"/>
       <geom type="capsule" size="0.004 0.025" pos="0.013 -0.008 0" material="metal" euler="0 0 1.047"/>
       <geom type="capsule" size="0.004 0.025" pos="-0.013 -0.008 0" material="metal" euler="0 0 -1.047"/>
     </body>
 
     <!-- ===== 机械臂1: 鼓手 ===== -->
-    <!-- 底座 -->
-    <body name="d_base" pos="-0.35 -0.5 0.06">
+    <body name="d_base" pos="-0.5 -0.25 0.06">
       <geom type="cylinder" size="0.05 0.04" material="arm_color" mass="8"/>
-      <!-- 大臂 (竖直) -->
       <body name="d_link1" pos="0 0 0.04">
-        <joint name="d_j1" type="hinge" axis="0 0 1" range="-2 2" damping="8"/>
+        <joint name="d_j1" type="hinge" axis="0 0 1" range="-2 2" damping="15"/>
         <geom type="capsule" fromto="0 0 0 0 0 0.2" size="0.03" material="arm_color"/>
-        <!-- 小臂 (水平延伸) -->
         <body name="d_link2" pos="0 0 0.2">
-          <joint name="d_j2" type="hinge" axis="0 1 0" range="-1.5 0.5" damping="8"/>
+          <joint name="d_j2" type="hinge" axis="0 1 0" range="-1.5 0.5" damping="15"/>
           <geom type="capsule" fromto="0 0 0 0.2 0 0" size="0.025" material="arm_color"/>
-          <!-- 前臂 -->
           <body name="d_link3" pos="0.2 0 0">
-            <joint name="d_j3" type="hinge" axis="0 1 0" range="-1.0 1.0" damping="5"/>
+            <joint name="d_j3" type="hinge" axis="0 1 0" range="-1.0 1.0" damping="10"/>
             <geom type="capsule" fromto="0 0 0 0.15 0 0" size="0.02" material="arm_color"/>
-            <!-- 鼓棒 -->
             <body name="d_stick" pos="0.15 0 0">
               <geom type="capsule" fromto="0 0 0 0.18 0 0" size="0.006" material="wood" mass="0.03"/>
               <site name="stick_tip" pos="0.18 0 0" size="0.008"/>
@@ -96,18 +90,17 @@
     </body>
 
     <!-- ===== 机械臂2: 木琴手 ===== -->
-    <body name="x_base" pos="0.0 -0.5 0.06">
+    <body name="x_base" pos="0.0 -0.25 0.06">
       <geom type="cylinder" size="0.05 0.04" material="arm_color" mass="8"/>
       <body name="x_link1" pos="0 0 0.04">
-        <joint name="x_j1" type="hinge" axis="0 0 1" range="-2 2" damping="8"/>
+        <joint name="x_j1" type="hinge" axis="0 0 1" range="-2 2" damping="15"/>
         <geom type="capsule" fromto="0 0 0 0 0 0.2" size="0.03" material="arm_color"/>
         <body name="x_link2" pos="0 0 0.2">
-          <joint name="x_j2" type="hinge" axis="0 1 0" range="-1.5 0.5" damping="8"/>
+          <joint name="x_j2" type="hinge" axis="0 1 0" range="-1.5 0.5" damping="15"/>
           <geom type="capsule" fromto="0 0 0 0.2 0 0" size="0.025" material="arm_color"/>
           <body name="x_link3" pos="0.2 0 0">
-            <joint name="x_j3" type="hinge" axis="0 1 0" range="-1.0 1.0" damping="5"/>
+            <joint name="x_j3" type="hinge" axis="0 1 0" range="-1.0 1.0" damping="10"/>
             <geom type="capsule" fromto="0 0 0 0.15 0 0" size="0.02" material="arm_color"/>
-            <!-- 木琴槌 -->
             <body name="x_mallet" pos="0.15 0 0">
               <geom type="capsule" fromto="0 0 0 0.15 0 0" size="0.006" material="wood" mass="0.03"/>
               <geom type="sphere" size="0.015" pos="0.15 0 0" material="red" mass="0.01"/>
@@ -119,18 +112,17 @@
     </body>
 
     <!-- ===== 机械臂3: 打击乐手 ===== -->
-    <body name="p_base" pos="0.4 -0.5 0.06">
+    <body name="p_base" pos="0.4 -0.25 0.06">
       <geom type="cylinder" size="0.05 0.04" material="arm_color" mass="8"/>
       <body name="p_link1" pos="0 0 0.04">
-        <joint name="p_j1" type="hinge" axis="0 0 1" range="-2 2" damping="8"/>
+        <joint name="p_j1" type="hinge" axis="0 0 1" range="-2 2" damping="15"/>
         <geom type="capsule" fromto="0 0 0 0 0 0.2" size="0.03" material="arm_color"/>
         <body name="p_link2" pos="0 0 0.2">
-          <joint name="p_j2" type="hinge" axis="0 1 0" range="-1.5 0.5" damping="8"/>
+          <joint name="p_j2" type="hinge" axis="0 1 0" range="-1.5 0.5" damping="15"/>
           <geom type="capsule" fromto="0 0 0 0.2 0 0" size="0.025" material="arm_color"/>
           <body name="p_link3" pos="0.2 0 0">
-            <joint name="p_j3" type="hinge" axis="0 1 0" range="-1.0 1.0" damping="5"/>
+            <joint name="p_j3" type="hinge" axis="0 1 0" range="-1.0 1.0" damping="10"/>
             <geom type="capsule" fromto="0 0 0 0.15 0 0" size="0.02" material="arm_color"/>
-            <!-- 打击棒 -->
             <body name="p_beater" pos="0.15 0 0">
               <geom type="capsule" fromto="0 0 0 0.15 0 0" size="0.006" material="wood" mass="0.03"/>
               <geom type="sphere" size="0.012" pos="0.15 0 0" material="brass" mass="0.01"/>
@@ -146,19 +138,18 @@
     <camera name="drummer_cam" pos="-0.6 -1.0 0.7" xyaxes="0.8 -0.6 0 -0.3 -0.4 0.9" fovy="45"/>
     <camera name="xylo_cam" pos="0 -1.0 0.7" xyaxes="1 0 0 0 0.3 0.95" fovy="40"/>
     <camera name="perc_cam" pos="0.6 -1.0 0.7" xyaxes="-0.8 -0.6 0 0.3 -0.4 0.9" fovy="45"/>
-    <camera name="front" pos="0 -2.2 1.0" xyaxes="1 0 0 0 0.4 0.9" fovy="60"/>
   </worldbody>
 
   <actuator>
-    <motor name="d_a1" joint="d_j1" ctrlrange="-80 80"/>
-    <motor name="d_a2" joint="d_j2" ctrlrange="-80 80"/>
-    <motor name="d_a3" joint="d_j3" ctrlrange="-80 80"/>
-    <motor name="x_a1" joint="x_j1" ctrlrange="-80 80"/>
-    <motor name="x_a2" joint="x_j2" ctrlrange="-80 80"/>
-    <motor name="x_a3" joint="x_j3" ctrlrange="-80 80"/>
-    <motor name="p_a1" joint="p_j1" ctrlrange="-80 80"/>
-    <motor name="p_a2" joint="p_j2" ctrlrange="-80 80"/>
-    <motor name="p_a3" joint="p_j3" ctrlrange="-80 80"/>
+    <motor name="d_a1" joint="d_j1" ctrlrange="-50 50"/>
+    <motor name="d_a2" joint="d_j2" ctrlrange="-50 50"/>
+    <motor name="d_a3" joint="d_j3" ctrlrange="-50 50"/>
+    <motor name="x_a1" joint="x_j1" ctrlrange="-50 50"/>
+    <motor name="x_a2" joint="x_j2" ctrlrange="-50 50"/>
+    <motor name="x_a3" joint="x_j3" ctrlrange="-50 50"/>
+    <motor name="p_a1" joint="p_j1" ctrlrange="-50 50"/>
+    <motor name="p_a2" joint="p_j2" ctrlrange="-50 50"/>
+    <motor name="p_a3" joint="p_j3" ctrlrange="-50 50"/>
   </actuator>
 
   <sensor>
