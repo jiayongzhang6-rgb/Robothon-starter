@@ -1,0 +1,10 @@
+{
+  "video_file": "demo.mp4",
+  "video_duration_seconds": 18,
+  "video_resolution": "960x540",
+  "tasks_completed": 8,
+  "tests_passed": 8,
+  "tests_total": 8,
+  "robot_type": "Franka Emika Panda (Dual)",
+  "application_domain": "Space Station Assembly"
+}
