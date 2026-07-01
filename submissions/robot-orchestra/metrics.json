@@ -1,0 +1,14 @@
+{
+  "success_rate": 99.2,
+  "trials": 128,
+  "wilson_ci": [95.7, 99.9],
+  "open_loop_rate": 47.7,
+  "closed_loop_advantage": 51.6,
+  "fault_recovery_rate": 94.4,
+  "fault_detections": 72,
+  "fault_recoveries": 68,
+  "instruments": 4,
+  "arms": 3,
+  "bpm": 120,
+  "songs": 3
+}
