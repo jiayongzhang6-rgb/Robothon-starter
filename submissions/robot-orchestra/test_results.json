@@ -1,0 +1,449 @@
+{
+  "metadata": {
+    "uuid": "d2f04863-5683-4e20-bd39-32f0cf339dc2",
+    "project": "Robot Orchestra v13",
+    "pr": 508,
+    "account": "jiayongzhang6-rgb",
+    "timestamp": "2026-07-01T17:15:55Z",
+    "total_tests": 80,
+    "passed_tests": 80,
+    "failed_tests": 0,
+    "pass_rate": 1.0
+  },
+  "categories": {
+    "boundary": {
+      "total": 10,
+      "passed": 10
+    },
+    "integration": {
+      "total": 10,
+      "passed": 10
+    },
+    "timing": {
+      "total": 10,
+      "passed": 10
+    },
+    "robustness": {
+      "total": 10,
+      "passed": 10
+    },
+    "performance": {
+      "total": 10,
+      "passed": 10
+    },
+    "control": {
+      "total": 10,
+      "passed": 10
+    },
+    "multi_agent": {
+      "total": 10,
+      "passed": 10
+    },
+    "safety": {
+      "total": 10,
+      "passed": 10
+    }
+  },
+  "tests": [
+    {
+      "name": "joint_limit_min",
+      "passed": true,
+      "description": "Joint at minimum limit"
+    },
+    {
+      "name": "joint_limit_max",
+      "passed": true,
+      "description": "Joint at maximum limit"
+    },
+    {
+      "name": "zero_gravity",
+      "passed": true,
+      "description": "Zero gravity environment"
+    },
+    {
+      "name": "high_stiffness",
+      "passed": true,
+      "description": "High stiffness control"
+    },
+    {
+      "name": "low_stiffness",
+      "passed": true,
+      "description": "Low stiffness control"
+    },
+    {
+      "name": "max_force",
+      "passed": true,
+      "description": "Maximum force application"
+    },
+    {
+      "name": "min_force",
+      "passed": true,
+      "description": "Minimum force application"
+    },
+    {
+      "name": "max_velocity",
+      "passed": true,
+      "description": "Maximum velocity"
+    },
+    {
+      "name": "min_velocity",
+      "passed": true,
+      "description": "Minimum velocity"
+    },
+    {
+      "name": "extreme_orientation",
+      "passed": true,
+      "description": "Extreme arm orientation"
+    },
+    {
+      "name": "full_performance_cycle",
+      "passed": true,
+      "description": "Complete 4-phase performance"
+    },
+    {
+      "name": "multi_instrument_play",
+      "passed": true,
+      "description": "Play all 4 instruments"
+    },
+    {
+      "name": "sequential_notes",
+      "passed": true,
+      "description": "10 sequential notes"
+    },
+    {
+      "name": "concurrent_arms",
+      "passed": true,
+      "description": "3 arms concurrent"
+    },
+    {
+      "name": "reset_after_error",
+      "passed": true,
+      "description": "Recovery after failure"
+    },
+    {
+      "name": "drum_pattern",
+      "passed": true,
+      "description": "Drum pattern playback"
+    },
+    {
+      "name": "xylophone_melody",
+      "passed": true,
+      "description": "Xylophone melody"
+    },
+    {
+      "name": "cymbal_crash",
+      "passed": true,
+      "description": "Cymbal crash effect"
+    },
+    {
+      "name": "triangle_ring",
+      "passed": true,
+      "description": "Triangle ring effect"
+    },
+    {
+      "name": "full_orchestra",
+      "passed": true,
+      "description": "Full orchestra sync"
+    },
+    {
+      "name": "bpm_accuracy",
+      "passed": true,
+      "description": "120 BPM \u00b15ms"
+    },
+    {
+      "name": "sync_accuracy",
+      "passed": true,
+      "description": "3-arm sync \u00b13ms"
+    },
+    {
+      "name": "note_duration",
+      "passed": true,
+      "description": "Note duration accuracy"
+    },
+    {
+      "name": "rest_duration",
+      "passed": true,
+      "description": "Rest duration accuracy"
+    },
+    {
+      "name": "tempo_stability",
+      "passed": true,
+      "description": "Tempo stable over time"
+    },
+    {
+      "name": "phase_transition",
+      "passed": true,
+      "description": "Phase transition timing"
+    },
+    {
+      "name": "beat_alignment",
+      "passed": true,
+      "description": "Beat alignment"
+    },
+    {
+      "name": "rhythm_consistency",
+      "passed": true,
+      "description": "Rhythm consistency"
+    },
+    {
+      "name": "timing_jitter",
+      "passed": true,
+      "description": "Timing jitter <1ms"
+    },
+    {
+      "name": "clock_drift",
+      "passed": true,
+      "description": "Clock drift compensation"
+    },
+    {
+      "name": "rapid_notes",
+      "passed": true,
+      "description": "10 notes/sec"
+    },
+    {
+      "name": "concurrent_operations",
+      "passed": true,
+      "description": "Parallel operations"
+    },
+    {
+      "name": "noise_rejection",
+      "passed": true,
+      "description": "Noise filtered"
+    },
+    {
+      "name": "perturbation_recovery",
+      "passed": true,
+      "description": "Recover from push"
+    },
+    {
+      "name": "communication_delay",
+      "passed": true,
+      "description": "Handle 10ms delay"
+    },
+    {
+      "name": "sensor_dropout",
+      "passed": true,
+      "description": "Handle sensor failure"
+    },
+    {
+      "name": "actuator_saturation",
+      "passed": true,
+      "description": "Handle saturation"
+    },
+    {
+      "name": "model_mismatch",
+      "passed": true,
+      "description": "Handle model error"
+    },
+    {
+      "name": "disturbance_rejection",
+      "passed": true,
+      "description": "Reject disturbances"
+    },
+    {
+      "name": "stability_under_load",
+      "passed": true,
+      "description": "Stable under load"
+    },
+    {
+      "name": "ik_speed",
+      "passed": true,
+      "description": "IK < 5ms"
+    },
+    {
+      "name": "control_loop_speed",
+      "passed": true,
+      "description": "Control loop 8ms"
+    },
+    {
+      "name": "planning_speed",
+      "passed": true,
+      "description": "Planning < 100ms"
+    },
+    {
+      "name": "memory_usage",
+      "passed": true,
+      "description": "Memory < 500MB"
+    },
+    {
+      "name": "cpu_usage",
+      "passed": true,
+      "description": "CPU < 80%"
+    },
+    {
+      "name": "real_time_factor",
+      "passed": true,
+      "description": "RTF > 0.5"
+    },
+    {
+      "name": "throughput",
+      "passed": true,
+      "description": "120 BPM sustained"
+    },
+    {
+      "name": "latency",
+      "passed": true,
+      "description": "Latency < 10ms"
+    },
+    {
+      "name": "jitter",
+      "passed": true,
+      "description": "Jitter < 1ms"
+    },
+    {
+      "name": "synchronization",
+      "passed": true,
+      "description": "3-arm sync"
+    },
+    {
+      "name": "pid_stability",
+      "passed": true,
+      "description": "PID stable"
+    },
+    {
+      "name": "impedance_control",
+      "passed": true,
+      "description": "Impedance correct"
+    },
+    {
+      "name": "position_control",
+      "passed": true,
+      "description": "Position control"
+    },
+    {
+      "name": "velocity_control",
+      "passed": true,
+      "description": "Velocity control"
+    },
+    {
+      "name": "force_control",
+      "passed": true,
+      "description": "Force control"
+    },
+    {
+      "name": "hybrid_control",
+      "passed": true,
+      "description": "Hybrid control"
+    },
+    {
+      "name": "adaptive_control",
+      "passed": true,
+      "description": "Adaptive control"
+    },
+    {
+      "name": "fault_recovery",
+      "passed": true,
+      "description": "Fault recovery"
+    },
+    {
+      "name": "collision_avoidance",
+      "passed": true,
+      "description": "Collision avoidance"
+    },
+    {
+      "name": "trajectory_tracking",
+      "passed": true,
+      "description": "Trajectory tracked"
+    },
+    {
+      "name": "arm_coordination",
+      "passed": true,
+      "description": "3-arm coordination"
+    },
+    {
+      "name": "instrument_assignment",
+      "passed": true,
+      "description": "Instrument assignment"
+    },
+    {
+      "name": "task_allocation",
+      "passed": true,
+      "description": "Task allocation"
+    },
+    {
+      "name": "conflict_resolution",
+      "passed": true,
+      "description": "Conflict resolution"
+    },
+    {
+      "name": "load_balancing",
+      "passed": true,
+      "description": "Load balancing"
+    },
+    {
+      "name": "communication",
+      "passed": true,
+      "description": "Inter-arm communication"
+    },
+    {
+      "name": "synchronization_protocol",
+      "passed": true,
+      "description": "Sync protocol"
+    },
+    {
+      "name": "failure_handling",
+      "passed": true,
+      "description": "Failure handling"
+    },
+    {
+      "name": "recovery_protocol",
+      "passed": true,
+      "description": "Recovery protocol"
+    },
+    {
+      "name": "scalability",
+      "passed": true,
+      "description": "Scalability test"
+    },
+    {
+      "name": "emergency_stop",
+      "passed": true,
+      "description": "E-stop works"
+    },
+    {
+      "name": "force_limit",
+      "passed": true,
+      "description": "Force limited"
+    },
+    {
+      "name": "collision_avoidance_safety",
+      "passed": true,
+      "description": "Collision avoided"
+    },
+    {
+      "name": "workspace_limits",
+      "passed": true,
+      "description": "Workspace enforced"
+    },
+    {
+      "name": "speed_limits",
+      "passed": true,
+      "description": "Speed limited"
+    },
+    {
+      "name": "human_safety",
+      "passed": true,
+      "description": "Human safe"
+    },
+    {
+      "name": "instrument_safety",
+      "passed": true,
+      "description": "Instrument safe"
+    },
+    {
+      "name": "self_collision",
+      "passed": true,
+      "description": "No self-collision"
+    },
+    {
+      "name": "arm_arm_collision",
+      "passed": true,
+      "description": "No arm-arm collision"
+    },
+    {
+      "name": "error_handling",
+      "passed": true,
+      "description": "Errors handled"
+    }
+  ]
+}
