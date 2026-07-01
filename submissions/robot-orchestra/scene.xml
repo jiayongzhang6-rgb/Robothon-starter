@@ -1,7 +1,7 @@
 <mujoco model="robot_orchestra_v2">
   <compiler angle="radian" autolimits="true"/>
   <option timestep="0.001" gravity="0 0 -9.81"/>
-  <visual><global offwidth="1280" offheight="720"/></visual>
+  <visual><global offwidth="1920" offheight="1088"/></visual>
 
   <default>
     <joint armature="0.01" damping="1.0"/>
